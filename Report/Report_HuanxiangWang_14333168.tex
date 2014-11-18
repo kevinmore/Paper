@@ -1,0 +1,70 @@
+\documentclass[a4paper, 12pt, oneside]{report}         %% LaTeX2e document.
+\usepackage {tcdthesis}              %% Preamble.
+\usepackage{graphicx,color}
+\usepackage{anysize}
+\usepackage{amsmath}
+
+            
+
+\mastersthesis                     %% Uncomment one of these; if you don't
+%\phdthesis                         %% use either, the default is \phdthesis.
+
+%\thesisdraft                       %% Uncomment this if you want a draft
+                                     %% version; this will print a timestamp
+                                     %% on each page of your thesis.
+
+\leftchapter                       %% Uncomment one of these if you want
+%\centerchapter                      %% left-justified, centered or
+% \rightchapter                      %% right-justified chapter headings.
+                                     %% Chapter headings includes the
+                                     %% Contents, Acknowledgments, Lists
+                                     %% of Tables and Figures and the Vita.
+                                     %% The default is \centerchapter.
+
+% \singlespace                       %% Uncomment one of these if you want
+ \oneandhalfspace                   %% single-spacing, space-and-a-half
+% \doublespace                       %% or double-spacing; the default is
+                                     %% \oneandhalfspace, which is the
+                                     %% minimum spacing accepted by the
+                                     %% Graduate School.
+
+\author{\textbf{Huanxiang Wang\begin{LARGE}
+•
+\end{LARGE}} \\14333168}
+\title{{\Huge Review of Paper [Yus14]} \\ \textbf{High-Performance Rendering of Realistic Cumulus Clouds
+Using Pre-computed Lighting}}
+\date{\today}
+
+\begin{document}                                  %% BEGIN THE DOCUMENT
+\maketitle
+
+\tableofcontents
+\listoftables
+\listoffigures
+
+%%
+%% Include thesis chapters here...
+%%
+                              
+
+\include{chapter1}       
+
+
+%\addcontentsline {toc}{chapter}{Appendices}       %% Force Appendices to appear in contents
+\begin{appendix}
+\include{appendix1}
+%\include{appendix2}
+\end{appendix}
+
+
+%\addcontentsline {toc}{chapter}{Bibliography}     %% Force Bibliography to appear in contents
+
+\begin{thebibliography}{ieeetr}                   %% Start your bibliography here; you can
+%\bibliography{refs}                               %% also use the \bibliography command
+
+\input{biblio}
+
+\end{thebibliography}                             %% to generate your bibliography.
+
+
+\end{document}                                    %% END THE DOCUMENT
