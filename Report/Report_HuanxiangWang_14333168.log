@@ -1,21 +1,12 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2014.11.18)  19 NOV 2014 01:13
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2014.11.19)  19 NOV 2014 13:41
 entering extended mode
 **Report_HuanxiangWang_14333168.tex
-(D:\TCD\GPU\Paper\Report\Report_HuanxiangWang_14333168.tex
-LaTeX2e <2011/06/27>
-Babel <v3.8m> and hyphenation patterns for english, afrikaans, ancientgreek, ar
-abic, armenian, assamese, basque, bengali, bokmal, bulgarian, catalan, coptic, 
-croatian, czech, danish, dutch, esperanto, estonian, farsi, finnish, french, ga
-lician, german, german-x-2013-05-26, greek, gujarati, hindi, hungarian, iceland
-ic, indonesian, interlingua, irish, italian, kannada, kurmanji, latin, latvian,
- lithuanian, malayalam, marathi, mongolian, mongolianlmc, monogreek, ngerman, n
-german-x-2013-05-26, nynorsk, oriya, panjabi, pinyin, polish, portuguese, roman
-ian, russian, sanskrit, serbian, slovak, slovenian, spanish, swedish, swissgerm
-an, tamil, telugu, turkish, turkmen, ukenglish, ukrainian, uppersorbian, usengl
-ishmax, welsh, loaded.
-("D:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\report.cls"
+(C:\TCD\Paper\Report\Report_HuanxiangWang_14333168.tex
+LaTeX2e <2014/05/01>
+Babel <3.9k> and hyphenation patterns for 68 languages loaded.
+("C:\Program Files\MiKTeX 2.9\tex\latex\base\report.cls"
 Document Class: report 2007/10/19 v1.4h Standard LaTeX document class
-("D:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\size12.clo"
+("C:\Program Files\MiKTeX 2.9\tex\latex\base\size12.clo"
 File: size12.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
 )
 \c@part=\count79
@@ -31,7 +22,7 @@ File: size12.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
 \belowcaptionskip=\skip42
 \bibindent=\dimen102
 )
-(D:\TCD\GPU\Paper\Report\tcdthesis.sty
+(C:\TCD\Paper\Report\tcdthesis.sty
 ****************************************************************
 ** TCD Thesis Style File, version 2.0, March 2005 
 ** Written by Dinesh Das 
@@ -47,31 +38,31 @@ File: size12.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
 \leap=\count91
 \x=\count92
 \y=\count93
-) ("D:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\graphicx.sty"
-Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
+) ("C:\Program Files\MiKTeX 2.9\tex\latex\graphics\graphicx.sty"
+Package: graphicx 2014/04/25 v1.0g Enhanced LaTeX Graphics (DPC,SPQR)
 
-("D:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\keyval.sty"
-Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
+("C:\Program Files\MiKTeX 2.9\tex\latex\graphics\keyval.sty"
+Package: keyval 2014/05/08 v1.15 key=value parser (DPC)
 \KV@toks@=\toks14
 )
-("D:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\graphics.sty"
+("C:\Program Files\MiKTeX 2.9\tex\latex\graphics\graphics.sty"
 Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
 
-("D:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\trig.sty"
+("C:\Program Files\MiKTeX 2.9\tex\latex\graphics\trig.sty"
 Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
 )
-("D:\Program Files (x86)\MiKTeX 2.9\tex\latex\00miktex\graphics.cfg"
+("C:\Program Files\MiKTeX 2.9\tex\latex\00miktex\graphics.cfg"
 File: graphics.cfg 2007/01/18 v1.5 graphics configuration of teTeX/TeXLive
 )
 Package graphics Info: Driver file: pdftex.def on input line 91.
 
-("D:\Program Files (x86)\MiKTeX 2.9\tex\latex\pdftex-def\pdftex.def"
+("C:\Program Files\MiKTeX 2.9\tex\latex\pdftex-def\pdftex.def"
 File: pdftex.def 2011/05/27 v0.06d Graphics/color for pdfTeX
 
-("D:\Program Files (x86)\MiKTeX 2.9\tex\generic\oberdiek\infwarerr.sty"
+("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\infwarerr.sty"
 Package: infwarerr 2010/04/08 v1.3 Providing info/warning/error messages (HO)
 )
-("D:\Program Files (x86)\MiKTeX 2.9\tex\generic\oberdiek\ltxcmds.sty"
+("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\ltxcmds.sty"
 Package: ltxcmds 2011/11/09 v1.22 LaTeX kernel commands for general use (HO)
 )
 \Gread@gobject=\count94
@@ -79,40 +70,42 @@ Package: ltxcmds 2011/11/09 v1.22 LaTeX kernel commands for general use (HO)
 \Gin@req@height=\dimen103
 \Gin@req@width=\dimen104
 )
-("D:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\color.sty"
-Package: color 2005/11/14 v1.0j Standard LaTeX Color (DPC)
+("C:\Program Files\MiKTeX 2.9\tex\latex\graphics\color.sty"
+Package: color 2014/04/23 v1.1a Standard LaTeX Color (DPC)
 
-("D:\Program Files (x86)\MiKTeX 2.9\tex\latex\00miktex\color.cfg"
+("C:\Program Files\MiKTeX 2.9\tex\latex\00miktex\color.cfg"
 File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
 )
-Package color Info: Driver file: pdftex.def on input line 130.
+Package color Info: Driver file: pdftex.def on input line 137.
 )
-("D:\Program Files (x86)\MiKTeX 2.9\tex\latex\ltxmisc\anysize.sty"
-Package: anysize 1994/08/13 1.0 Contributed LaTeX2e package
+("C:\Program Files\MiKTeX 2.9\tex\latex\anysize\anysize.sty"
+Package: anysize 1994/08/13 setting margin sizes
 
-Package: `anysize' 1.0 <1994/08/13>
+document style option `anysize' loaded
+Michael Salzenberg, Thomas Esser, Dirk Hillbrecht
+Version 1.0, Aug 13, 1994
 \@Leftmargin=\dimen105
 \@Rightmargin=\dimen106
 \@Topmargin=\dimen107
 \@Bottommargin=\dimen108
-) ("D:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsmath\amsmath.sty"
+) ("C:\Program Files\MiKTeX 2.9\tex\latex\amsmath\amsmath.sty"
 Package: amsmath 2013/01/14 v2.14 AMS math features
 \@mathmargin=\skip44
 
 For additional information on amsmath, use the `?' option.
-("D:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsmath\amstext.sty"
+("C:\Program Files\MiKTeX 2.9\tex\latex\amsmath\amstext.sty"
 Package: amstext 2000/06/29 v2.01
 
-("D:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsmath\amsgen.sty"
+("C:\Program Files\MiKTeX 2.9\tex\latex\amsmath\amsgen.sty"
 File: amsgen.sty 1999/11/30 v2.0
 \@emptytoks=\toks15
 \ex@=\dimen109
 ))
-("D:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsmath\amsbsy.sty"
+("C:\Program Files\MiKTeX 2.9\tex\latex\amsmath\amsbsy.sty"
 Package: amsbsy 1999/11/29 v1.2d
 \pmbraise@=\dimen110
 )
-("D:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsmath\amsopn.sty"
+("C:\Program Files\MiKTeX 2.9\tex\latex\amsmath\amsopn.sty"
 Package: amsopn 1999/12/14 v2.01 operator names
 )
 \inf@bad=\count95
@@ -153,8 +146,9 @@ LaTeX Font Info:    Redeclaring font encoding OMS on input line 567.
 LaTeX Info: Redefining \[ on input line 2665.
 LaTeX Info: Redefining \] on input line 2666.
 )
-(D:\TCD\GPU\Paper\Report\Report_HuanxiangWang_14333168.aux
-(D:\TCD\GPU\Paper\Report\chapter1.aux) (D:\TCD\GPU\Paper\Report\appendix1.aux))
+(C:\TCD\Paper\Report\Report_HuanxiangWang_14333168.aux
+(C:\TCD\Paper\Report\chapter1.aux) (C:\TCD\Paper\Report\chapter2.aux)
+(C:\TCD\Paper\Report\chapter3.aux) (C:\TCD\Paper\Report\appendix1.aux))
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 38.
 LaTeX Font Info:    ... okay on input line 38.
 LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 38.
@@ -167,7 +161,8 @@ LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 38.
 LaTeX Font Info:    ... okay on input line 38.
 LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 38.
 LaTeX Font Info:    ... okay on input line 38.
-("D:\Program Files (x86)\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
+
+("C:\Program Files\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count107
 \scratchdimen=\dimen118
@@ -187,80 +182,94 @@ Missing character: There is no ¢ in font cmbx12!
  [1
 
 {C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map}]
-(D:\TCD\GPU\Paper\Report\Report_HuanxiangWang_14333168.toc)
+(C:\TCD\Paper\Report\Report_HuanxiangWang_14333168.toc)
 \tf@toc=\write3
  [1
 
 ]
-(D:\TCD\GPU\Paper\Report\Report_HuanxiangWang_14333168.lot)
+(C:\TCD\Paper\Report\Report_HuanxiangWang_14333168.lot)
 \tf@lot=\write4
  [2
 
 
 ]
-(D:\TCD\GPU\Paper\Report\Report_HuanxiangWang_14333168.lof)
+(C:\TCD\Paper\Report\Report_HuanxiangWang_14333168.lof)
 \tf@lof=\write5
  [3
 
 
 ]
-(D:\TCD\GPU\Paper\Report\chapter1.tex
+(C:\TCD\Paper\Report\chapter1.tex
 Chapter 1.
+<images/overview.png, id=17, 952.30782pt x 570.63188pt>
+File: images/overview.png Graphic file (type png)
 
-<images/single-fluffy-cumulus-cloud-sunny-day-2012-07-26.jpg, id=17, 2601.72pt 
+<use images/overview.png>
+Package pdftex.def Info: images/overview.png used on input line 6.
+(pdftex.def)             Requested size: 285.69455pt x 171.19089pt.
+) [1
+
+
+ <C:/TCD/Paper/Report/images/overview.png (PNG copy)>] [2] (C:\TCD\Paper\Report
+\chapter2.tex
+Chapter 2.
+
+<images/single-fluffy-cumulus-cloud-sunny-day-2012-07-26.jpg, id=24, 2601.72pt 
 x 1734.48pt>
 File: images/single-fluffy-cumulus-cloud-sunny-day-2012-07-26.jpg Graphic file 
 (type jpg)
  <use images/single-fluffy-cumulus-cloud-sunny-day-2012-07-26.jpg>
 Package pdftex.def Info: images/single-fluffy-cumulus-cloud-sunny-day-2012-07-2
-6.jpg used on input line 8.
-(pdftex.def)             Requested size: 338.23547pt x 225.49031pt.
+6.jpg used on input line 10.
+(pdftex.def)             Requested size: 260.18724pt x 173.45816pt.
 
-[1
+[3
 
 
- <D:/TCD/GPU/Paper/Report/images/single-fluffy-cumulus-cloud-sunny-day-2012-07-
-26.jpg>] <images/billboards.png, id=21, 375.65344pt x 249.93375pt>
+
+ <C:/TCD/Paper/Report/images/single-fluffy-cumulus-cloud-sunny-day-2012-07-26.j
+pg>] <images/billboards.png, id=29, 375.65344pt x 249.93375pt>
 File: images/billboards.png Graphic file (type png)
 
 <use images/billboards.png>
-Package pdftex.def Info: images/billboards.png used on input line 25.
-(pdftex.def)             Requested size: 300.52315pt x 199.94727pt.
- [2 <D:/TCD/GPU/Paper/Report/images/billboards.png>] <images/raymarching.png, i
-d=25, 600.74437pt x 335.75438pt>
+Package pdftex.def Info: images/billboards.png used on input line 27.
+(pdftex.def)             Requested size: 225.3938pt x 149.9614pt.
+ [4 <C:/TCD/Paper/Report/images/billboards.png>]
+<images/raymarching.png, id=33, 600.74437pt x 335.75438pt>
 File: images/raymarching.png Graphic file (type png)
 
 <use images/raymarching.png>
-Package pdftex.def Info: images/raymarching.png used on input line 37.
-(pdftex.def)             Requested size: 360.4494pt x 201.45418pt.
+Package pdftex.def Info: images/raymarching.png used on input line 40.
+(pdftex.def)             Requested size: 300.37144pt x 167.87677pt.
 
-<images/volumerendering.png, id=26, 254.45062pt x 160.34906pt>
+<images/volumerendering.png, id=34, 254.45062pt x 160.34906pt>
 File: images/volumerendering.png Graphic file (type png)
 
 <use images/volumerendering.png>
-Package pdftex.def Info: images/volumerendering.png used on input line 49.
+Package pdftex.def Info: images/volumerendering.png used on input line 52.
 (pdftex.def)             Requested size: 254.45pt x 160.34866pt.
-) [3 <D:/TCD/GPU/Paper/Report/images/raymarching.png>] [4 <D:/TCD/GPU/Paper/Rep
-ort/images/volumerendering.png>]
-(D:\TCD\GPU\Paper\Report\appendix1.tex
+ [5 <C:/TCD/Paper/Report/images/raymarching.png>]) [6 <C:/TCD/Paper/Report/imag
+es/volumerendering.png>]
+(C:\TCD\Paper\Report\chapter3.tex
+Chapter 3.
+) [7
+
+
+
+] (C:\TCD\Paper\Report\appendix1.tex
 Appendix A.
-) [5
+) [8
 
 
 
-] (D:\TCD\GPU\Paper\Report\biblio.tex
+] (C:\TCD\Paper\Report\biblio.tex
 Overfull \hbox (4.04526pt too wide) in paragraph at lines 6--8
 $[]$ 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 15--16
-[]\OT1/cmr/m/n/12 Dobashi, Yoshi-nori, Kazu-fumi Kaneda, Hideo Ya-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 15--16
-\OT1/cmr/m/n/12 mashita, Tsuyoshi Okita, To-moyuki Nishita (2000)
+Overfull \hbox (6.2789pt too wide) in paragraph at lines 15--16
+[]\OT1/cmr/m/n/12 Dobashi et al (2000) $[]$ 
  []
 
 Missing character: There is no â in font cmr12!
@@ -273,27 +282,28 @@ Overfull \hbox (26.43726pt too wide) in paragraph at lines 18--19
 
 Missing character: There is no Ë in font cmr12!
 Missing character: There is no ‡ in font cmr12!
-) [6
+) [9
 
 
-] (D:\TCD\GPU\Paper\Report\Report_HuanxiangWang_14333168.aux
-(D:\TCD\GPU\Paper\Report\chapter1.aux) (D:\TCD\GPU\Paper\Report\appendix1.aux))
- ) 
+] (C:\TCD\Paper\Report\Report_HuanxiangWang_14333168.aux
+(C:\TCD\Paper\Report\chapter1.aux) (C:\TCD\Paper\Report\chapter2.aux)
+(C:\TCD\Paper\Report\chapter3.aux) (C:\TCD\Paper\Report\appendix1.aux)) ) 
 Here is how much of TeX's memory you used:
- 2000 strings out of 493921
- 26961 string characters out of 3144851
- 83283 words of memory out of 3000000
- 5274 multiletter control sequences out of 15000+200000
+ 2018 strings out of 493706
+ 27083 string characters out of 3144528
+ 87835 words of memory out of 3000000
+ 5304 multiletter control sequences out of 15000+200000
  11073 words of font info for 40 fonts, out of 3000000 for 9000
- 841 hyphenation exceptions out of 8191
- 27i,8n,20p,629b,265s stack positions out of 5000i,500n,10000p,200000b,50000s
-<D:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb>
-<D:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><D:
-/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr12.pfb><D:/Pr
-ogram Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr17.pfb>
-Output written on Report_HuanxiangWang_14333168.pdf (10 pages, 936678 bytes).
+ 1025 hyphenation exceptions out of 8191
+ 27i,8n,20p,657b,265s stack positions out of 5000i,500n,10000p,200000b,50000s
+<C:/Pr
+ogram Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Program Fi
+les/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Program Files/MiKTe
+X 2.9/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Program Files/MiKTeX 2.9/fon
+ts/type1/public/amsfonts/cm/cmr17.pfb>
+Output written on Report_HuanxiangWang_14333168.pdf (13 pages, 1669589 bytes).
 PDF statistics:
- 55 PDF objects out of 1000 (max. 8388607)
+ 66 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 21 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 26 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -1,12 +1,15 @@
 \contentsline {chapter}{List of Tables}{ii}
 \contentsline {chapter}{List of Figures}{iii}
-\contentsline {chapter}{Chapter{} \numberline {1}Background}{1}
-\contentsline {section}{\numberline {1.1}Cumulus Clouds}{1}
-\contentsline {subsection}{\numberline {1.1.1}What is cumulus clouds?}{1}
-\contentsline {subsection}{\numberline {1.1.2}Why does the paper concentrate on rendering cumulus clouds?}{2}
-\contentsline {section}{\numberline {1.2}Existing cloud rendering techniques}{2}
-\contentsline {subsection}{\numberline {1.2.1}Particle Systems (Billboards)}{2}
-\contentsline {subsection}{\numberline {1.2.2}Ray Casting-Based Rendering (Ray Marching)}{3}
-\contentsline {subsection}{\numberline {1.2.3}Rasterization-based Rendering (Volume Rendering)}{3}
-\contentsline {chapter}{Appendix{} \numberline {A}Abbreviations}{5}
-\contentsline {chapter}{Bibliography}{6}
+\contentsline {chapter}{Chapter{} \numberline {1}Introduction}{1}
+\contentsline {section}{\numberline {1.1}Abstract}{1}
+\contentsline {chapter}{Chapter{} \numberline {2}Background}{3}
+\contentsline {section}{\numberline {2.1}Cumulus Clouds}{3}
+\contentsline {subsection}{\numberline {2.1.1}What is cumulus clouds?}{3}
+\contentsline {subsection}{\numberline {2.1.2}Why does the paper concentrate on rendering cumulus clouds?}{4}
+\contentsline {section}{\numberline {2.2}Existing cloud rendering techniques}{4}
+\contentsline {subsection}{\numberline {2.2.1}Particle Systems (Billboards)}{4}
+\contentsline {subsection}{\numberline {2.2.2}Ray Casting-Based Rendering (Ray Marching)}{5}
+\contentsline {subsection}{\numberline {2.2.3}Rasterization-based Rendering (Volume Slicing)}{6}
+\contentsline {chapter}{Chapter{} \numberline {3}Algorithm}{7}
+\contentsline {chapter}{Appendix{} \numberline {A}Abbreviations}{8}
+\contentsline {chapter}{Bibliography}{9}
