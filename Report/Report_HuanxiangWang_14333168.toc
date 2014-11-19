@@ -4,7 +4,9 @@
 \contentsline {section}{\numberline {1.1}Cumulus Clouds}{1}
 \contentsline {subsection}{\numberline {1.1.1}What is cumulus clouds?}{1}
 \contentsline {subsection}{\numberline {1.1.2}Why does the paper concentrate on rendering cumulus clouds?}{2}
-\contentsline {section}{\numberline {1.2}Existing Method to render clouds in real time}{2}
-\contentsline {subsection}{\numberline {1.2.1}Billboards}{2}
-\contentsline {chapter}{Appendix{} \numberline {A}Abbreviations}{3}
-\contentsline {chapter}{Bibliography}{4}
+\contentsline {section}{\numberline {1.2}Existing cloud rendering techniques}{2}
+\contentsline {subsection}{\numberline {1.2.1}Particle Systems (Billboards)}{2}
+\contentsline {subsection}{\numberline {1.2.2}Ray Casting-Based Rendering (Ray Marching)}{3}
+\contentsline {subsection}{\numberline {1.2.3}Rasterization-based Rendering (Volume Rendering)}{3}
+\contentsline {chapter}{Appendix{} \numberline {A}Abbreviations}{5}
+\contentsline {chapter}{Bibliography}{6}
