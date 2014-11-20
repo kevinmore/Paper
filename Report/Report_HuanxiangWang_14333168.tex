@@ -3,7 +3,23 @@
 \usepackage{graphicx,color}
 \usepackage{anysize}
 \usepackage{amsmath}
-
+\usepackage{color}
+\usepackage{xcolor}
+\definecolor{keywordcolor}{rgb}{0.0,0.0,1.0}
+\usepackage{listings}
+\lstset{breaklines}%这条命令可以让LaTeX自动将长的代码行换行排版
+\lstset{extendedchars=false}%这一条命令可以解决代码跨页时，章节标题，页眉等汉字不显示的问题
+\lstset{language=C++, %用于设置语言为C++
+	keywordstyle=\color{keywordcolor} \bfseries, 
+	identifierstyle=,
+	basicstyle=\scriptsize, 
+	commentstyle=\color{green!40!black},
+	stringstyle=\ttfamily, 
+	showstringspaces=false,
+	frame=shadowbox, %边框
+	captionpos=b
+}
+%%%%%%%%%%%%% C++ Code
             
 
 \mastersthesis                     %% Uncomment one of these; if you don't
@@ -41,7 +57,6 @@ Using Pre-computed Lighting}}
 \tableofcontents
 \listoftables
 \listoffigures
-
 %%
 %% Include thesis chapters here...
 %%

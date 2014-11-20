@@ -11,6 +11,10 @@
 \contentsline {subsection}{\numberline {2.2.2}Ray Casting-Based Rendering (Ray Marching)}{5}
 \contentsline {subsection}{\numberline {2.2.3}Rasterization-based Rendering (Volume Slicing)}{6}
 \contentsline {section}{\numberline {2.3}Mathematical Background}{6}
-\contentsline {chapter}{Chapter{} \numberline {3}Algorithm}{7}
-\contentsline {chapter}{Appendix{} \numberline {A}Abbreviations}{8}
-\contentsline {chapter}{Bibliography}{9}
+\contentsline {chapter}{Chapter{} \numberline {3}Algorithm and Implementation}{9}
+\contentsline {section}{\numberline {3.1}Pre-Computing Optical Depth}{9}
+\contentsline {subsection}{\numberline {3.1.1}The Design}{9}
+\contentsline {subsection}{\numberline {3.1.2}The Implementation}{10}
+\contentsline {section}{\numberline {3.2}Pre-Computing Scattering}{12}
+\contentsline {chapter}{Appendix{} \numberline {A}Abbreviations}{13}
+\contentsline {chapter}{Bibliography}{14}

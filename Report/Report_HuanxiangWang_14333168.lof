@@ -5,5 +5,11 @@
 \contentsline {figure}{\numberline {2.2}{\ignorespaces Billboards Clouds}}{4}
 \contentsline {figure}{\numberline {2.3}{\ignorespaces Ray Marching Clouds}}{5}
 \contentsline {figure}{\numberline {2.4}{\ignorespaces Volume Rendering Clouds}}{6}
+\contentsline {figure}{\numberline {2.5}{\ignorespaces The scattering behaviour of lights through a cloud}}{7}
+\contentsline {figure}{\numberline {2.6}{\ignorespaces Light scattering in the cloud}}{7}
+\contentsline {figure}{\numberline {2.7}{\ignorespaces The phase function $P(\theta )$}}{8}
 \addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Four angels to describe a ray}}{9}
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Numerically integrate the optical depth of a ray}}{10}
+\contentsline {figure}{\numberline {3.3}{\ignorespaces A typical noise texture}}{10}
 \addvspace {10\p@ }

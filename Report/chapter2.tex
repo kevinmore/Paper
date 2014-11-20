@@ -22,6 +22,7 @@ Among the numerous kinds of clouds in the nature environment, cumulus clouds hav
 The author of the paper talked about the related work that has been down and from his research we know that off-line rendering can be quite accurate about simulating the cloud, but it could take minutes to hours to draw a single frame. We'll be looking into the existing real time rendering methods in detail in this section.
 
 \subsection{Particle Systems (Billboards)}
+
 \begin{figure}[htp]
 \begin{center}
 \includegraphics[scale=0.6]{images/billboards.png}
@@ -35,6 +36,7 @@ By rendering clouds with billboards as particle system, we treat the clouds as 3
 This method has certain advantages, such as fast, efficient, and the programmer can easily manipulate the shapes and the locations of the billboards. However, as the clouds are represented in a quads facing the camera all the time, the scene will get unrealistic sometimes, for example, when an aircraft flies above the clouds, we will still see the clouds facing the camera as if the we are on the ground. Also the lighting on the billboard is usually precomputed and the clouds are static, which means that the clouds will not be able to adjust its appearance according to the environment's changes.
 
 \subsection{Ray Casting-Based Rendering (Ray Marching)}
+
 \begin{figure}[htp]
 \begin{center}
 \includegraphics[scale=0.5]{images/raymarching.png}
@@ -47,6 +49,7 @@ By rendering clouds in the ray marching method, the typical way is to cast multi
 This method can result in a fairly realistic output. However, it's not easy for a programmer to control the shape and location of the clouds. Also, in order to do aliasing, the ray marching steps will be tedious. As for the rendering result, the lightings is usually limited to single scattering, which is more or less not so realistic.
 
 \subsection{Rasterization-based Rendering (Volume Slicing)}
+
 \begin{figure}[htp]
 \begin{center}
 \includegraphics[scale=1.0]{images/volumerendering.png}
@@ -60,4 +63,52 @@ Volume slicing is quite straightforward, and it is used for rendering regular gr
 By using this method, we can have a convincing light result, since it enables the multiple forward light scattering using slices. However, like ray marching method, it's difficult for a programmer to control the shape and location of the clouds. Also, in order to get a more realistic result, the volume will be sliced into tons of planes, which takes a lot of memory and execution time.
 
 \section{Mathematical Background}
-The author discussed the concepts of calculating the light transport in a certain medium and the mathematical solution to the concepts. As we know, the light is able to transport in a number of materials, such as air, fluid, and solid medium. Different materials of the medium will result in different amount of scattering and absorption. In clouds simulating, the medium will be small particles.
+The author discussed the concepts of calculating the light transport in a certain medium and the mathematical solution to the concepts. As we know, the light is able to transport in a number of materials, such as air, fluid, and solid medium. 
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[scale=0.6]{images/scattering.png}
+\caption{The scattering behaviour of lights through a cloud}
+\label{f5}
+\end{center}
+\end{figure}
+Different materials of the medium will result in different amount of scattering, absorption and emission. We note the scattering coefficient as $\beta_{Sc}$, the absorption coefficient as $\beta_{Ab}$, the emission coefficient as $\beta_{Em}$. Now we'll introduce a new coefficient called the extinction coefficient $\beta_{Ex}$, which is the measurement of how strongly the light is absorbed in a medium. For any type of medium, we have:
+\begin{equation}
+\beta_{Ex} = \beta_{Sc} + \beta_{Ab}
+\end{equation}
+The author implied that cloud are purely scattering medium, which means $\beta_{Ab} = \beta_{Em} = 0$
+Hence, the extinction coefficient for the cloud is the scattering coefficient, which indicates $\beta_{Ex} = \beta_{Sc}$. Since we only have one coefficient to worry about, we'll note the extinction coefficient simply as $\beta$ in the rest of the review, and it will also be referred to as the scattering coefficient. A schematic can be found in the figure below.
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[scale=1.0]{images/scatteringscene.png}
+\caption{Light scattering in the cloud}
+\label{f6}
+\end{center}
+\end{figure}
+
+Now let's say, we have a point \textbf{A} and point \textbf{B}, the normal direction from point \textbf{A} to \textbf{B} is $\overrightarrow{r} = \frac{B-A}{|B-A|}$. We note the current integration point, which has one step size from point \textbf{A} to \textbf{B}, as \textbf{P}.
+The author then indicated that the optical depth $\tau(A, B)$ between points A and B is the integral of the extinction coefficient on the path:
+\begin{equation}
+\tau(A, B) = \int_{A}^{B}\beta(P)\cdot ds
+\end{equation}
+In addition, the light gets attenuated while propagating through the cloud, so let's assume that the intensity of the light is reduced by a factor of $e^{-\tau}$.\\
+In Figure 2.6, the camera is in point \textbf{C}, the viewing direction is $\overrightarrow{v}$. The author proposed that the final light $L_{In}$ getting into the camera can be calculated in the following equation:
+\begin{equation}
+L_{In}(C, \overrightarrow{v}) = \int_{P_0}^{P_1}e^{-\tau(P, P_0)} \cdot J(P, \overrightarrow{v}) \cdot \beta(P) \cdot ds
+\end{equation}
+As we can see in Figure 2.6, $P_0$ is the entry point of the view ray into the cloud, and $P_1$ is the exit point. $J(P, \overrightarrow{v})$ is the total radiance of light at point \textbf{P} towards the camera:
+\begin{equation}
+J(P, \overrightarrow{v}) = \int_{\Omega}L_In(P, \overrightarrow{\omega}) \cdot P(\theta) \cdot d\omega
+\end{equation}
+Here, the author introduced $P(\theta)$ as the phase function describing the probability of a photon being scattered from the incident direction to the outgoing direction $\overrightarrow{v}$, where $\theta$ is the angle between two.
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[scale=1.0]{images/phasefunction.png}
+\caption{The phase function $P(\theta)$}
+\label{f7}
+\end{center}
+\end{figure}
+\\The author mentioned that the equation 3 is hard to solve, and he used \textbf{Cornette-Shanks} function to approximate the phase function:
+\begin{equation}
+P(\theta) \approx \frac{1}{4\pi} \cdot \frac{3(1-g^2)}{2(2+g^2)} \cdot \frac{1+\cos^2 {\theta}}{(1+g^2-2g\cos{\theta})^{\frac{3}{2}}}
+\end{equation}
