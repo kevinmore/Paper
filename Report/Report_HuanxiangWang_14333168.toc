@@ -21,6 +21,7 @@
 \contentsline {subsubsection}{The Implementation}{13}
 \contentsline {subsection}{\numberline {3.2.2}Multiple Scattering}{14}
 \contentsline {subsubsection}{The Design}{14}
-\contentsline {subsubsection}{The Implementation}{15}
+\contentsline {subsubsection}{The Implementation}{14}
+\contentsline {section}{\numberline {3.3}Generating Real-time Shading Model}{18}
 \contentsline {chapter}{Appendix{} \numberline {A}Abbreviations}{19}
 \contentsline {chapter}{Bibliography}{20}

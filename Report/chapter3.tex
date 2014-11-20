@@ -17,7 +17,7 @@ To describe a ray, we need 4 angles, 2 angles describing the start point on the 
 
 \begin{figure}[htp]
 \begin{center}
-\includegraphics[scale=1.0]{images/opticaldepthintegration.png}
+\includegraphics[scale=0.5]{images/opticaldepthintegration.png}
 \caption{Numerically integrate the optical depth of a ray}
 \label{f9}
 \end{center}
@@ -27,7 +27,7 @@ Then we use Equation 2.2: $\tau(A, B) = \int_{A}^{B}\beta(P)\cdot ds$ to accumul
 
 \begin{figure}[htp]
 \begin{center}
-\includegraphics[scale=0.15]{images/Noise.png}
+\includegraphics[scale=0.1]{images/Noise.png}
 \caption{A typical noise texture}
 \label{f10}
 \end{center}
@@ -223,7 +223,8 @@ float GatherScatteringPS(SScreenSizeQuadVSOutput In) : SV_Target
     return fGatheredScattering;
 }
 \end{lstlisting}
-Similarly, in this function \textbf{GatherScatteringPS}, the given projection position and the 4 parameters from the 4D look-up table is decomposed to 3 vec3 positions: the first one \textbf{f3PosUSSpace} describes the start position of the ray, the second one \textbf{f3ViewRayUSSpace} describes the ray direction, the last one \textbf{f3LightDirUSSpace} describes the light direction. Then we use the \textbf{zenith angles} $\varphi_v$ and \textbf{azimuth angles} $\theta_v$ count as the total steps, and we do the integration inside the two nested for loops. In each step, $\varphi_v$ and $\theta_v$ are increased by a step size. According to $\varphi_v$, $\theta_v$ and the start point, we calculate the ray direction \textbf{f3CurrDir}.
+Similarly, in this function \textbf{GatherScatteringPS}, the given projection position and the 4 parameters from the 4D look-up table is decomposed to 3 vec3 positions: the first one \textbf{f3PosUSSpace} describes the start position of the ray, the second one \textbf{f3ViewRayUSSpace} describes the ray direction, the last one \textbf{f3LightDirUSSpace} describes the light direction. Then we use the \textbf{zenith angles} $\varphi_v$ and \textbf{azimuth angles} $\theta_v$ count as the total steps, and we do the integration inside the two nested for loops. In each step, $\varphi_v$ and $\theta_v$ are increased by a step size. According to $\varphi_v$, $\theta_v$ and the start point, we calculate the ray direction \textbf{f3CurrDir}. After this, we transform the ray from world space back to the particle space. Then we check if the distance of the 4D table is 1 in order to calculate the current scattering direction \textbf{fCurrDirScattering} correctly. Finally, we accumulate the total scattering in each step by the amount of multiplying the current scattering direction \textbf{fCurrDirScattering} to the delta angle \textbf{fDiffSolidAngle}.\\
+\textbf{SAMPLE\_4D\_LUT} is a utility function which returns an interpolated result into the 5th parameter from the first 4 parameters, which are 3D texture, Dim, coordinates and LOD index.
 
 
 \item Compute $\bar{L}_{In}^{(n)}$ as the current order.
@@ -275,6 +276,8 @@ float ComputeScatteringOrderPS(SScreenSizeQuadVSOutput In) : SV_Target
 }
 \end{lstlisting}
 
+As always, firstly the function \textbf{ComputeScatteringOrderPS} computes the ray's start position, the direction, and the light direction. Again, moving the start point slightly inside the sphere to avoid precision issues. Then we calculate the intersected ray result, and step up some basic variables for the integration. We also calculate the interpolated result from the 3D texture of gathered scattering texture and store it into a variable called \textbf{fPrevGatheredSctr} as the initial scattering. In each integration step, we multiply the gathered scattering by the attenuation to the camera \textbf{fAttenuationToCamera}. Finally we accumulate the final scattering light into the camera \textbf{fInscattering} with the average amount of the scattering in this step \textbf{fGatheredScattering} and the scattering from the previous step \textbf{fPrevGatheredSctr}.
+
 \item Accumulate current scattering order to the total look-up table: $\bar{L}_{In}^M = \bar{L}_{In}^M + \bar{L}_{In}^{(n)}$.
 \begin{lstlisting}
 float AccumulateMultipleScattering(SScreenSizeQuadVSOutput In) : SV_Target
@@ -284,4 +287,8 @@ float AccumulateMultipleScattering(SScreenSizeQuadVSOutput In) : SV_Target
     return fMultipleSctr;
 }
 \end{lstlisting}
+
+This function \textbf{AccumulateMultipleScattering} is quite straightforward, it accumulates the multiple scattering.
 \end{enumerate}
+
+\section{Generating Real-time Shading Model}
