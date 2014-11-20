@@ -66,7 +66,7 @@ By using this method, we can have a convincing light result, since it enables th
 The author discussed the concepts of calculating the light transport in a certain medium and the mathematical solution to the concepts. As we know, the light is able to transport in a number of materials, such as air, fluid, and solid medium. 
 \begin{figure}[htp]
 \begin{center}
-\includegraphics[scale=0.6]{images/scattering.png}
+\includegraphics[scale=0.4]{images/scattering.png}
 \caption{The scattering behaviour of lights through a cloud}
 \label{f5}
 \end{center}
@@ -86,21 +86,21 @@ Hence, the extinction coefficient for the cloud is the scattering coefficient, w
 \end{center}
 \end{figure}
 
-Now let's say, we have a point \textbf{A} and point \textbf{B}, the normal direction from point \textbf{A} to \textbf{B} is $\overrightarrow{r} = \frac{B-A}{|B-A|}$. We note the current integration point, which has one step size from point \textbf{A} to \textbf{B}, as \textbf{P}.
+Now let's say, we have a point \textbf{A} and point \textbf{B}, the normal direction from point \textbf{A} to \textbf{B} is $\vec{r} = \frac{B-A}{|B-A|}$. We note the current integration point, which has one step size from point \textbf{A} to \textbf{B}, as \textbf{P}.
 The author then indicated that the optical depth $\tau(A, B)$ between points A and B is the integral of the extinction coefficient on the path:
 \begin{equation}
 \tau(A, B) = \int_{A}^{B}\beta(P)\cdot ds
 \end{equation}
 In addition, the light gets attenuated while propagating through the cloud, so let's assume that the intensity of the light is reduced by a factor of $e^{-\tau}$.\\
-In Figure 2.6, the camera is in point \textbf{C}, the viewing direction is $\overrightarrow{v}$. The author proposed that the final light $L_{In}$ getting into the camera can be calculated in the following equation:
+In Figure 2.6, the camera is in point \textbf{C}, the viewing direction is $\vec{v}$. The author proposed that the final light $L_{In}$ getting into the camera can be calculated in the following equation:
 \begin{equation}
-L_{In}(C, \overrightarrow{v}) = \int_{P_0}^{P_1}e^{-\tau(P, P_0)} \cdot J(P, \overrightarrow{v}) \cdot \beta(P) \cdot ds
+L_{In}(C, \vec{v}) = \int_{P_0}^{P_1}e^{-\tau(P, P_0)} \cdot J(P, \vec{v}) \cdot \beta(P) \cdot ds
 \end{equation}
-As we can see in Figure 2.6, $P_0$ is the entry point of the view ray into the cloud, and $P_1$ is the exit point. $J(P, \overrightarrow{v})$ is the total radiance of light at point \textbf{P} towards the camera:
+As we can see in Figure 2.6, $P_0$ is the entry point of the view ray into the cloud, and $P_1$ is the exit point. $J(P, \vec{v})$ is the total radiance of light at point \textbf{P} towards the camera:
 \begin{equation}
-J(P, \overrightarrow{v}) = \int_{\Omega}L_In(P, \overrightarrow{\omega}) \cdot P(\theta) \cdot d\omega
+J(P, \vec{v}) = \int_{\Omega}L_In(P, \vec{\omega}) \cdot P(\theta) \cdot d\omega
 \end{equation}
-Here, the author introduced $P(\theta)$ as the phase function describing the probability of a photon being scattered from the incident direction to the outgoing direction $\overrightarrow{v}$, where $\theta$ is the angle between two.
+Here, the author introduced $P(\theta)$ as the phase function describing the probability of a photon being scattered from the incident direction to the outgoing direction $\vec{v}$, where $\theta$ is the angle between two.
 \begin{figure}[htp]
 \begin{center}
 \includegraphics[scale=1.0]{images/phasefunction.png}
@@ -112,3 +112,17 @@ Here, the author introduced $P(\theta)$ as the phase function describing the pro
 \begin{equation}
 P(\theta) \approx \frac{1}{4\pi} \cdot \frac{3(1-g^2)}{2(2+g^2)} \cdot \frac{1+\cos^2 {\theta}}{(1+g^2-2g\cos{\theta})^{\frac{3}{2}}}
 \end{equation}
+
+If we represent $L_{In}$ as the infinite sum of the intensities of the light scattered $n$ times:
+\begin{equation}
+L_{In} = \sum_{n=0}^{\infty}L_{In}^{(n)},
+\end{equation}
+where
+\begin{equation}
+L_{In}^{(n)}(C, \vec{v}) = \int_{P_0}^{P_1}e^{-\tau(P, P_0)} \cdot J(P, \vec{v}) \cdot \beta(P) \cdot ds
+\end{equation}
+and
+\begin{equation}
+J^{(n)}(P, \vec{v}) = \int_{\Omega}L_In(P, \vec{\omega}) \cdot P(\theta) \cdot d\omega
+\end{equation}
+The author noted that the initial scattered light $L_{In}^{(0)}$ is the radiance of light scattered 0 times, which is the external radiance attenuated by the cloud.
