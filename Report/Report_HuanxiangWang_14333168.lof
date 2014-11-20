@@ -13,4 +13,5 @@
 \contentsline {figure}{\numberline {3.2}{\ignorespaces Numerically integrate the optical depth of a ray}}{10}
 \contentsline {figure}{\numberline {3.3}{\ignorespaces A typical noise texture}}{10}
 \contentsline {figure}{\numberline {3.4}{\ignorespaces Pre-computing single scattering inside the spherical particle}}{12}
+\contentsline {figure}{\numberline {3.5}{\ignorespaces Pre-computed scattering for different light orientations. From left to right: single scattering only, 2 + scattering only, all terms (including ambient). The particle in the bottom row is illuminated from above}}{15}
 \addvspace {10\p@ }

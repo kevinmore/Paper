@@ -152,9 +152,136 @@ float PrecomputeSingleSctrPS(SScreenSizeQuadVSOutput In) : SV_Target
 \end{lstlisting}
 
 
-Similar to the function calculating optical depth, this function \textbf{PrecomputeSingleSctrPS} firstly decomposes the given projection position and the 4 parameters from the 4D look-up table into 3 vec3 positions, the first one \textbf{f3EntryPointUSSpace} describes the start position of the ray, the second one \textbf{f3ViewRayUSSpace} describes the ray direction, the last one \textbf{f3LightDirUSSpace} describes the light direction. Using these 3 components, the density scale is calculated. Similarly, the intersection view ray is evaluated carefully avoiding the precision issues by moving the starting point slightly into the sphere by the amount of \textbf{f3ViewRayUSSpace*1e-4}. Then the integration is performed in the \textbf{for loop}. In each step, we calculate the distance \textbf{fCloudMassToLight} from center of the cloud to the light, and the distance \textbf{fCloudMassToCamera} from the center of the cloud to the camera. Then we can evaluate the total light attenuation \textbf{fTotalLightAttenuation}. Finally, we accumulate the single scattering result \textbf{fInscattering} and \textbf{fCloudMassToCamera} because we are moving forward. Why didn't the author accumulate \textbf{fCloudMassToLight}? That's because the light source is treated as directional light, which means the light source is in a really far distance.
+Similar to the function calculating optical depth, this function \textbf{PrecomputeSingleSctrPS} firstly decomposes the given projection position and the 4 parameters from the 4D look-up table into 3 vec3 positions: the first one \textbf{f3EntryPointUSSpace} describes the start position of the ray, the second one \textbf{f3ViewRayUSSpace} describes the ray direction, the last one \textbf{f3LightDirUSSpace} describes the light direction. Using these 3 components, the density scale is calculated. Similarly, the intersection view ray is evaluated carefully avoiding the precision issues by moving the starting point slightly into the sphere by the amount of \textbf{f3ViewRayUSSpace*1e-4}. Then the integration is performed in the \textbf{for loop}. In each step, we calculate the distance \textbf{fCloudMassToLight} from center of the cloud to the light, and the distance \textbf{fCloudMassToCamera} from the center of the cloud to the camera. Then we can evaluate the total light attenuation \textbf{fTotalLightAttenuation}. Finally, we accumulate the single scattering result \textbf{fInscattering} and \textbf{fCloudMassToCamera} because we are moving forward. Why didn't the author accumulate \textbf{fCloudMassToLight}? That's because the light source is treated as directional light, which means the light source is in an infinite distance.
 
 \subsection{Multiple Scattering}
-Multiple scattering is based single scattering using Equation 3.2 $\bar{L}^{(1)}_{In} = \int_{S}^{E}e^{-\tau(P,S)}e^{-\tau(P,Q)} \cdot \beta(P) \cdot ds$. However, this time, we need to calculate $\bar{L}^{(n)}_{In}$
+Multiple scattering is based single scattering using Equation 3.2 $\bar{L}^{(1)}_{In} = \int_{S}^{E}e^{-\tau(P,S)}e^{-\tau(P,Q)} \cdot \beta(P) \cdot ds$. However, this time, we need to calculate $\bar{L}^{(n)}_{In}$.
 \subsubsection{The Design}
+The author proposed with 3 steps:
+\begin{enumerate}
+\item Evaluate $\bar{J}^{(n)}(\theta_S, \phi_v, \theta_v, r)$  for every point and direction inside he sphere by solving Equation 2.8: $J^{(n)}(P, \vec{v}) = \int_{\Omega}L_In(P, \vec{\omega}) \cdot P(\theta) \cdot d\omega$.
+\item Evaluate $\bar{L}_{In}^{(n)}(\theta_S, \phi_v, \theta_v, r)$ as the current order in scattering by solving Equation 2.7: $L_{In}^{(n)}(C, \vec{v}) = \int_{P_0}^{P_1}e^{-\tau(P, P_0)} \cdot J(P, \vec{v}) \cdot \beta(P) \cdot ds$.
+\item Accumulate current scattering order to the total look-up table: $\bar{L}_{In}^M = \bar{L}_{In}^M + \bar{L}_{In}^{(n)}$.
+\end{enumerate}
+As a result, the figure below shows single, multiple and final lighting for the sphere.
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[scale=0.1]{images/scatteringresult.png}
+\caption{Pre-computed scattering for different light orientations.
+From left to right: single scattering only, 2 + scattering
+only, all terms (including ambient). The particle in the bottom
+row is illuminated from above}
+\label{f12}
+\end{center}
+\end{figure}
 \subsubsection{The Implementation}
+We'll look into the implementation details of the 3 steps in this section.
+\begin{enumerate}
+\item Compute $\bar{J}^{(n)}$ for each point and direction inside the sphere.
+\begin{lstlisting}
+float GatherScatteringPS(SScreenSizeQuadVSOutput In) : SV_Target
+{
+    float4 f4LUTCoords = float4(ProjToUV(In.m_f2PosPS), g_GlobalCloudAttribs.f4Parameter.xy);
+
+    float3 f3PosUSSpace, f3ViewRayUSSpace, f3LightDirUSSpace;
+    ParticleScatteringLUTToWorldParams(f4LUTCoords, f3PosUSSpace, f3ViewRayUSSpace, f3LightDirUSSpace, false);
+
+    float3 f3LocalX, f3LocalY, f3LocalZ;
+    ConstructLocalFrameXYZ(-normalize(f3PosUSSpace), f3LightDirUSSpace, f3LocalX, f3LocalY, f3LocalZ);
+
+    float fGatheredScattering = 0;
+    float fTotalSolidAngle = 0;
+    const float fNumZenithAngles = VOL_SCATTERING_IN_PARTICLE_LUT_DIM.z;
+    const float fNumAzimuthAngles = VOL_SCATTERING_IN_PARTICLE_LUT_DIM.y;
+    const float fZenithSpan = PI;
+    const float fAzimuthSpan = 2*PI;
+    for(float ZenithAngleNum = 0.5; ZenithAngleNum < fNumZenithAngles; ++ZenithAngleNum)
+        for(float AzimuthAngleNum = 0.5; AzimuthAngleNum < fNumAzimuthAngles; ++AzimuthAngleNum)
+        {
+            float ZenithAngle = ZenithAngleNum/fNumZenithAngles * fZenithSpan;
+            float AzimuthAngle = (AzimuthAngleNum/fNumAzimuthAngles - 0.5) * fAzimuthSpan;
+            float3 f3CurrDir = GetDirectionInLocalFrameXYZ(f3LocalX, f3LocalY, f3LocalZ, ZenithAngle, AzimuthAngle);
+            float4 f4CurrDirLUTCoords = WorldParamsToParticleScatteringLUT(f3PosUSSpace, f3CurrDir, f3LightDirUSSpace, false);
+            float fCurrDirScattering = 0;
+            SAMPLE_4D_LUT(g_tex3DPrevSctrOrder, VOL_SCATTERING_IN_PARTICLE_LUT_DIM, f4CurrDirLUTCoords, 0, fCurrDirScattering);
+            if( g_GlobalCloudAttribs.f4Parameter.w == 1 )
+            {
+                fCurrDirScattering *= HGPhaseFunc( dot(-f3CurrDir, f3LightDirUSSpace) );
+            }
+            fCurrDirScattering *= HGPhaseFunc( dot(f3CurrDir, f3ViewRayUSSpace), 0.7 );
+
+            float fdZenithAngle = fZenithSpan / fNumZenithAngles;
+            float fdAzimuthAngle = fAzimuthSpan / fNumAzimuthAngles * sin(ZenithAngle);
+            float fDiffSolidAngle = fdZenithAngle * fdAzimuthAngle;
+            fTotalSolidAngle += fDiffSolidAngle;
+            fGatheredScattering += fCurrDirScattering * fDiffSolidAngle;
+        }
+    
+    // Total solid angle should be 4*PI. Renormalize to fix discretization issues
+    fGatheredScattering *= 4*PI / fTotalSolidAngle;
+
+    return fGatheredScattering;
+}
+\end{lstlisting}
+Similarly, in this function \textbf{GatherScatteringPS}, the given projection position and the 4 parameters from the 4D look-up table is decomposed to 3 vec3 positions: the first one \textbf{f3PosUSSpace} describes the start position of the ray, the second one \textbf{f3ViewRayUSSpace} describes the ray direction, the last one \textbf{f3LightDirUSSpace} describes the light direction. Then we use the \textbf{zenith angles} $\varphi_v$ and \textbf{azimuth angles} $\theta_v$ count as the total steps, and we do the integration inside the two nested for loops. In each step, $\varphi_v$ and $\theta_v$ are increased by a step size. According to $\varphi_v$, $\theta_v$ and the start point, we calculate the ray direction \textbf{f3CurrDir}.
+
+
+\item Compute $\bar{L}_{In}^{(n)}$ as the current order.
+\begin{lstlisting}
+float ComputeScatteringOrderPS(SScreenSizeQuadVSOutput In) : SV_Target
+{
+    float4 f4StartPointLUTCoords = float4(ProjToUV(In.m_f2PosPS), g_GlobalCloudAttribs.f4Parameter.xy);
+
+    float3 f3PosUSSpace, f3ViewRayUSSpace, f3LightDirUSSpace;
+    ParticleScatteringLUTToWorldParams(f4StartPointLUTCoords, f3PosUSSpace, f3ViewRayUSSpace, f3LightDirUSSpace, false);
+
+    // Intersect view ray with the unit sphere:
+    float2 f2RayIsecs;
+    // f3NormalizedStartPos  is located exactly on the surface; slightly move start pos inside the sphere
+    // to avoid precision issues
+    float3 f3BiasedPos = f3PosUSSpace + f3ViewRayUSSpace*1e-4;
+    GetRaySphereIntersection(f3BiasedPos, f3ViewRayUSSpace, 0, 1.f, f2RayIsecs);
+    if( f2RayIsecs.y < f2RayIsecs.x )
+        return 0;
+
+    float3 f3EndPos = f3BiasedPos + f3ViewRayUSSpace * f2RayIsecs.y;
+    float fNumSteps = max(VOL_SCATTERING_IN_PARTICLE_LUT_DIM.w*2, NUM_INTEGRATION_STEPS)*2;
+    float3 f3Step = (f3EndPos - f3PosUSSpace) / fNumSteps;
+    float fStepLen = length(f3Step);
+    float fCloudMassToCamera = 0;
+    float fParticleRadius = g_GlobalCloudAttribs.fReferenceParticleRadius;
+    float fInscattering = 0;
+
+    float fPrevGatheredSctr = 0;
+    SAMPLE_4D_LUT(g_tex3DGatheredScattering, VOL_SCATTERING_IN_PARTICLE_LUT_DIM, f4StartPointLUTCoords, 0, fPrevGatheredSctr);
+	// Light attenuation == 1
+    for(float fStepNum=1; fStepNum <= fNumSteps; ++fStepNum)
+    {
+        float3 f3CurrPos = f3PosUSSpace + f3Step * fStepNum;
+
+        fCloudMassToCamera += fStepLen * fParticleRadius;
+        float fAttenuationToCamera = exp( -g_GlobalCloudAttribs.fAttenuationCoeff * fCloudMassToCamera );
+
+        float4 f4CurrDirLUTCoords = WorldParamsToParticleScatteringLUT(f3CurrPos, f3ViewRayUSSpace, f3LightDirUSSpace, false);
+        float fGatheredScattering = 0;
+        SAMPLE_4D_LUT(g_tex3DGatheredScattering, VOL_SCATTERING_IN_PARTICLE_LUT_DIM, f4CurrDirLUTCoords, 0, fGatheredScattering);
+        fGatheredScattering *= fAttenuationToCamera;
+
+        fInscattering += (fGatheredScattering + fPrevGatheredSctr) /2;
+        fPrevGatheredSctr = fGatheredScattering;
+    }
+
+    return fInscattering * fStepLen * fParticleRadius * g_GlobalCloudAttribs.fScatteringCoeff;
+}
+\end{lstlisting}
+
+\item Accumulate current scattering order to the total look-up table: $\bar{L}_{In}^M = \bar{L}_{In}^M + \bar{L}_{In}^{(n)}$.
+\begin{lstlisting}
+float AccumulateMultipleScattering(SScreenSizeQuadVSOutput In) : SV_Target
+{
+    float3 f3LUTCoords = float3(ProjToUV(In.m_f2PosPS), g_GlobalCloudAttribs.f4Parameter.x);
+    float fMultipleSctr = g_tex3DPrevSctrOrder.SampleLevel(samPointWrap, f3LUTCoords, 0);
+    return fMultipleSctr;
+}
+\end{lstlisting}
+\end{enumerate}
