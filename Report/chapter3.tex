@@ -81,8 +81,75 @@ float2 PrecomputeOpticalDepthPS(SScreenSizeQuadVSOutput In) : SV_Target
 }
 \end{lstlisting}
 
+
 The integration function is \textbf{PrecomputeOpticalDepthPS}. Firstly, it decomposes the given projection position and the 4 angle parameters from inhomogeneous coordinates into 2 vec3 positions, the first one \textbf{f3NormalizedStartPos} describes the start position of the ray, the second one \textbf{f3RayDir} describes the ray direction. Then the intersecting view ray inside the unit sphere is calculated. Since the start position is just on the surface of the sphere, in order to avoid precision issues, the author moved the start position slightly into the sphere by the amount of \textbf{f3RayDir*1e-4}. Then the integration is done inside the \textbf{for loop}. \textbf{DENSITY\_GENERATION\_METHOD} is defined as: 0 represents radial fall-off + 3D noise, 1 represents 3D noise + thresholding, 2 represents pyroclastic style.
 \textbf{fDensity} is the current density of this step. Finally, the total density \textbf{fTotalDensity} for a ray is accumulated.
 
 
 \section{Pre-Computing Scattering}
+In this step, the author proposed with two types of scattering: single scattering and multiple scattering. In nature, a photon inside a cloud is scattered multiple times before it leaves the cloud. Hence the author concentrated on the multiple scattering in order to render a realistic cloud appearance. The goal is to calculate multiple scattering for every possible light position, camera position and orientation.
+
+\subsection{Single Scattering}
+\subsubsection{The Design}
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[scale=1.0]{images/singlescattering.png}
+\caption{Pre-computing single scattering inside the spherical
+particle}
+\label{f11}
+\end{center}
+\end{figure}
+First of all, the author assumed that the particle density only depends on the distance to the center. As the particle is a perfect sphere, which has the nature of symmetry, the author indicated that an arbitrary light direction coinciding with positive $z$ axis can be chosen to examine one of the rays that intersect the sphere. Since the light field is also symmetrical, only one angle $\theta_S$ is needed to describe the start point of a ray. As discussed in the previous section, another 2 angles $\phi_v$ and $\theta_v$ will still be needed to describe the ray direction. As the light field inside the volumes is important to solve the scattering equation, the author introduced a 4D look-up table with 3 angles($\theta_S$, $\phi_v$ and $\theta_v$) and the fraction of distance $r$ from the center of the sphere. We note the table as 
+\begin{equation}
+\bar{L}^{(1)}_{In}(\theta_S, \phi_v, \theta_v, r), \theta_S\in[0, \pi], \phi_v\in[0, \pi], \theta_v\in[0, \pi], r\in[0, 1].
+\end{equation}
+The author then proposed with a solution to single scattering inside the spherical particle:
+\begin{equation}
+\bar{L}^{(1)}_{In} = \int_{S}^{E}e^{-\tau(P,S)}e^{-\tau(P,Q)} \cdot \beta(P) \cdot ds,
+\end{equation}
+where \textbf{S} is the start point of the ray and \textbf{E} is the exit point of the ray. \textbf{Q} is the point on the surface of the sphere through which the light reaches the current integration point \textbf{P}. The author finally implied that the phase function $P(\theta)$ is only used at run time to avoid precision issues. Just like the optical depth calculation, the extinction coefficient $\beta(P)$ can be evaluated in different methods as long as the distance to the center is the only influencing factor. The author tried different methods and finally decided to make the density constant.
+
+\subsubsection{The Implementation}
+Let's have a look at the implementation detail in code.
+\begin{lstlisting}
+float PrecomputeSingleSctrPS(SScreenSizeQuadVSOutput In) : SV_Target
+{
+    float4 f4LUTCoords = float4(ProjToUV(In.m_f2PosPS), g_GlobalCloudAttribs.f4Parameter.xy);
+    float3 f3EntryPointUSSpace, f3ViewRayUSSpace, f3LightDirUSSpace;
+    float fDensityScale;
+    ParticleScatteringLUTToWorldParams(f4LUTCoords, g_GlobalCloudAttribs.f4Parameter.z, f3EntryPointUSSpace, f3ViewRayUSSpace, f3LightDirUSSpace, false, fDensityScale);
+    // Intersect view ray with the unit sphere:
+    float2 f2RayIsecs;
+    // f3NormalizedStartPos  is located exactly on the surface; slightly move the start pos inside the sphere
+    // to avoid precision issues
+    float3 f3BiasedEntryPoint = f3EntryPointUSSpace + f3ViewRayUSSpace*1e-4;
+    GetRaySphereIntersection(f3BiasedEntryPoint, f3ViewRayUSSpace, 0, 1.f, f2RayIsecs);
+    if( f2RayIsecs.y < f2RayIsecs.x ) return 0;
+    float3 f3EndPos = f3BiasedEntryPoint + f3ViewRayUSSpace * f2RayIsecs.y;
+    float fNumSteps = NUM_INTEGRATION_STEPS;
+    float3 f3Step = (f3EndPos - f3EntryPointUSSpace) / fNumSteps;
+    float fStepLen = length(f3Step);
+    float fCloudMassToCamera = 0;
+    float fParticleRadius = GetParticleSize(GetCloudRingWorldStep(0, g_GlobalCloudAttribs));
+    float fInscattering = 0;
+    for(float fStepNum=0.5; fStepNum < fNumSteps; ++fStepNum)
+    {
+        float3 f3CurrPos = f3EntryPointUSSpace + f3Step * fStepNum;
+        float fDensity = 1;
+        fDensity *= fDensityScale;
+        float fCloudMassToLight = 0;
+        GetRaySphereIntersection(f3CurrPos, f3LightDirUSSpace, 0, 1.f, f2RayIsecs);
+        if( f2RayIsecs.y > f2RayIsecs.x )
+        {
+            fCloudMassToLight = abs(f2RayIsecs.x) * fParticleRadius;
+        }
+        float fTotalLightAttenuation = exp( -g_GlobalCloudAttribs.fAttenuationCoeff * (fCloudMassToLight + fCloudMassToCamera) );
+        fInscattering += fTotalLightAttenuation * fDensity * g_GlobalCloudAttribs.fScatteringCoeff;
+        fCloudMassToCamera += fDensity * fStepLen * fParticleRadius;
+    }
+    return fInscattering * fStepLen * fParticleRadius;
+}
+\end{lstlisting}
+
+
+Similar to the function calculating optical depth, this function \textbf{PrecomputeSingleSctrPS} firstly decomposes the given projection position and the 4 parameters from the 4D look-up table into 3 vec3 positions, the first one \textbf{f3EntryPointUSSpace} describes the start position of the ray, the second one \textbf{f3ViewRayUSSpace} describes the ray direction, the last one \textbf{f3LightDirUSSpace} describes the light direction. Using these 3 components, the density scale is calculated. Similarly, the intersection view ray is evaluated carefully avoiding the precision issues by moving the starting point slightly into the sphere by the amount of \textbf{f3ViewRayUSSpace*1e-4}. Then the integration is performed in the \textbf{for loop}. In each step, we calculate the distance \textbf{fCloudMassToLight} from center of the cloud to the light, and the distance \textbf{fCloudMassToCamera} from the center of the cloud to the camera. Then we can evaluate the total light attenuation \textbf{fTotalLightAttenuation}. Finally, we accumulate the single scattering result \textbf{fInscattering} and \textbf{fCloudMassToCamera} because we are moving forward. Why didn't the author accumulate \textbf{fCloudMassToLight}? That's because the light source is treated as directional light.

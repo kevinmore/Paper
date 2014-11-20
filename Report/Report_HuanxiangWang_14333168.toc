@@ -16,5 +16,8 @@
 \contentsline {subsection}{\numberline {3.1.1}The Design}{9}
 \contentsline {subsection}{\numberline {3.1.2}The Implementation}{10}
 \contentsline {section}{\numberline {3.2}Pre-Computing Scattering}{12}
-\contentsline {chapter}{Appendix{} \numberline {A}Abbreviations}{13}
-\contentsline {chapter}{Bibliography}{14}
+\contentsline {subsection}{\numberline {3.2.1}Single Scattering}{12}
+\contentsline {subsubsection}{The Design}{12}
+\contentsline {subsubsection}{The Implementation}{13}
+\contentsline {chapter}{Appendix{} \numberline {A}Abbreviations}{15}
+\contentsline {chapter}{Bibliography}{16}
