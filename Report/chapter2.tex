@@ -41,7 +41,7 @@ This method has certain advantages, such as fast, efficient, and the programmer 
 
 \begin{figure}[htp]
 \begin{center}
-\includegraphics[scale=0.5]{images/raymarching.png}
+\includegraphics[scale=0.4]{images/raymarching.png}
 \caption{Ray Marching Clouds}
 \label{f3}
 \end{center}
@@ -138,3 +138,8 @@ The author also indicated that the final radiance at the camera position is the 
 \begin{equation}
 L(C, \vec{v}) = L_{In}(C, \vec{v}) + e^{-\tau(P_0, P_1)} \cdot L_B.
 \end{equation}
+
+\section{Conclusion and Review}
+In this chapter, we introduced the benefits of using cumulus clouds, looked into the existing techniques for rendering realistic clouds and also explained the mathematical background to pre-compute the optical depth and the scattering.
+
+Regarding to the performance, personally, I don't think the phase function $P(\theta)$ in Equation 2.5 is necessary. Firstly, to get the final rendering result, some part inside the cloud will be applied with light occlusion procedure, which means that even if the light get scattered in some certain particle, it will still be cut off during the occlusion procedure. In addition, Equation 2.5 could take a noticeable amount of time since there are usually millions of particle in an open scene. Instead, using a look-up table which contains the value ranges of $\theta$ and the corresponding possibility is a good alternative solution. For example, if $0 \leq \theta \leq \frac{\pi}{10}$, then the possibility is $80\%$.

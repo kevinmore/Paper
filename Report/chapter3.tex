@@ -410,3 +410,52 @@ void GetSunLightExtinctionAndSkyLight(in float3 f3PosWS,
 \end{lstlisting}
 This function \textbf{GetSunLightExtinctionAndSkyLight} basically calculate the ambient sky light \textbf{f3AmbientSkyLight} from the look-up table $\overline{T}$. As we can see, we get the earth center position \textbf{f3EarthCentre} first, and use it to calculate the distance between the earth center to the particle \textbf{fDistToCentre}. Then, the altitude of the particle \textbf{fHeightAboveSurface} and the cos value of the zenith angle \textbf{fCosZenithAngle} are evaluated. After this, we retrieve the optical depth from the pre-computed 4D look-up tale. Finally, we calculate the ambient sky light using the data from above and sample it with a 2D texture describing the general ambient pattern.
 
+\section{Volume-Aware Blending}
+The author proposed with a new blending method because the traditional alpha blending is not able to describe the intersection of particle volumes.
+\subsection{The Design}
+The figure below shows a typical intersection scenario of two particles. The particles have non alpha-premultiplied colors $C_0, C_1$ and densities $\rho_0, \rho_1$.
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[scale=1.0]{images/intersection.png}
+\caption{Intersection of two volumetric particles}
+\label{f15}
+\end{center}
+\end{figure}
+
+The author derived the transparency and color for the 3 parts:
+\begin{enumerate}
+\item Front:
+\begin{eqnarray}
+T_f &=& e^{-\rho_0 \cdot d_f \cdot \beta}\\
+C_f &=& C_0 \cdot (1-T_f)
+\end{eqnarray}
+
+\item Back:
+\begin{eqnarray}
+T_b &=& e^{-\rho_0 \cdot d_b \cdot \beta}\\
+C_b &=& C_0 \cdot (1-T_b)
+\end{eqnarray}
+
+\item Intersection:
+\begin{eqnarray}
+T_i &=& e^{-(\rho_0+\rho_1) \cdot d_i \cdot \beta}\\
+C_i &=& \frac{C_0\rho_0 + C_1\rho_1}{\rho_0+\rho_1} \cdot (1-T_i)
+\end{eqnarray}
+\end{enumerate}
+
+Hence, the final transparency and alpha-premultiplied color are:
+\begin{eqnarray}
+T &=& T_f\cdot T_i\cdot T_b\\
+C &=& C_f + T_f \cdot Ci + T_f \cdot T_i \cdot C_b
+\end{eqnarray}
+
+\subsection{The Implementation}
+
+
+
+\section{Conclusion and Review}
+1.use quaternions instead of 4 angles, and interpolate between quaternions.
+2.assume directional light when doing scattering is not always true.
+3.particles have to be sorted to perform the volume aware blending, that costs a heavy load of calculations.
+4.decomposing the projection and 4d table in computing optical depth and scattering is redundant. why not create a data structure to store the ray information?

@@ -1,5 +1,4 @@
-\contentsline {chapter}{List of Tables}{iii}
-\contentsline {chapter}{List of Figures}{iv}
+\contentsline {chapter}{List of Figures}{iii}
 \contentsline {chapter}{Chapter{} \numberline {1}Introduction}{1}
 \contentsline {section}{\numberline {1.1}Abstract}{1}
 \contentsline {chapter}{Chapter{} \numberline {2}Background}{3}
@@ -11,6 +10,7 @@
 \contentsline {subsection}{\numberline {2.2.2}Ray Casting-Based Rendering (Ray Marching)}{5}
 \contentsline {subsection}{\numberline {2.2.3}Rasterization-based Rendering (Volume Slicing)}{5}
 \contentsline {section}{\numberline {2.3}Mathematical Background}{6}
+\contentsline {section}{\numberline {2.4}Conclusion and Review}{8}
 \contentsline {chapter}{Chapter{} \numberline {3}Algorithm and Implementation}{9}
 \contentsline {section}{\numberline {3.1}Generating Particles}{9}
 \contentsline {subsection}{\numberline {3.1.1}The Design}{9}
@@ -34,5 +34,8 @@
 \contentsline {section}{\numberline {3.6}Generating Real-time Shading Model}{20}
 \contentsline {subsection}{\numberline {3.6.1}The Design}{20}
 \contentsline {subsection}{\numberline {3.6.2}The Implementation}{21}
-\contentsline {chapter}{Appendix{} \numberline {A}Abbreviations}{22}
-\contentsline {chapter}{Bibliography}{23}
+\contentsline {section}{\numberline {3.7}Volume-Aware Blending}{22}
+\contentsline {subsection}{\numberline {3.7.1}The Design}{22}
+\contentsline {subsection}{\numberline {3.7.2}The Implementation}{23}
+\contentsline {section}{\numberline {3.8}Conclusion and Review}{23}
+\contentsline {chapter}{Bibliography}{24}

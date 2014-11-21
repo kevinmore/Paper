@@ -16,4 +16,4 @@
 \contentsline {figure}{\numberline {3.5}{\ignorespaces Pre-computing single scattering inside the spherical particle}}{13}
 \contentsline {figure}{\numberline {3.6}{\ignorespaces Pre-computed scattering for different light orientations. From left to right: single scattering only, 2 + scattering only, all terms (including ambient). The particle in the bottom row is illuminated from above}}{16}
 \contentsline {figure}{\numberline {3.7}{\ignorespaces Light-space tile grid (left) and computing light occlusion by traversing the tile’s list (right)}}{19}
-\addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.8}{\ignorespaces Intersection of two volumetric particles}}{22}
