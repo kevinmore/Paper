@@ -5,13 +5,15 @@
 \contentsline {figure}{\numberline {2.2}{\ignorespaces Billboards Clouds}}{4}
 \contentsline {figure}{\numberline {2.3}{\ignorespaces Ray Marching Clouds}}{5}
 \contentsline {figure}{\numberline {2.4}{\ignorespaces Volume Rendering Clouds}}{6}
-\contentsline {figure}{\numberline {2.5}{\ignorespaces The scattering behaviour of lights through a cloud}}{7}
+\contentsline {figure}{\numberline {2.5}{\ignorespaces The scattering behaviour of lights through a cloud}}{6}
 \contentsline {figure}{\numberline {2.6}{\ignorespaces Light scattering in the cloud}}{7}
-\contentsline {figure}{\numberline {2.7}{\ignorespaces The phase function $P(\theta )$}}{8}
+\contentsline {figure}{\numberline {2.7}{\ignorespaces The angle $\theta $ between the incident direction and outgoing direction of the light}}{8}
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {3.1}{\ignorespaces Four angels to describe a ray}}{9}
-\contentsline {figure}{\numberline {3.2}{\ignorespaces Numerically integrate the optical depth of a ray}}{10}
-\contentsline {figure}{\numberline {3.3}{\ignorespaces A typical noise texture}}{10}
-\contentsline {figure}{\numberline {3.4}{\ignorespaces Pre-computing single scattering inside the spherical particle}}{12}
-\contentsline {figure}{\numberline {3.5}{\ignorespaces Pre-computed scattering for different light orientations. From left to right: single scattering only, 2 + scattering only, all terms (including ambient). The particle in the bottom row is illuminated from above}}{15}
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Camera-centered particle grid}}{9}
+\contentsline {figure}{\numberline {3.2}{\ignorespaces A typical noise texture}}{10}
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Four angels to describe a ray}}{11}
+\contentsline {figure}{\numberline {3.4}{\ignorespaces Numerically integrate the optical depth of a ray}}{12}
+\contentsline {figure}{\numberline {3.5}{\ignorespaces Pre-computing single scattering inside the spherical particle}}{13}
+\contentsline {figure}{\numberline {3.6}{\ignorespaces Pre-computed scattering for different light orientations. From left to right: single scattering only, 2 + scattering only, all terms (including ambient). The particle in the bottom row is illuminated from above}}{16}
+\contentsline {figure}{\numberline {3.7}{\ignorespaces Light-space tile grid (left) and computing light occlusion by traversing the tile’s list (right)}}{19}
 \addvspace {10\p@ }

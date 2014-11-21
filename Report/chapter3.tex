@@ -1,6 +1,55 @@
 \chapter{Algorithm and Implementation}
-In this chapter, we'll look into the algorithm overview and the corresponding code implementation.
+In this chapter, we'll look into the algorithm overview and the corresponding implementation details.
 
+\section{Generating Particles}
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[scale=0.5]{images/particlegrid.png}
+\caption{Camera-centered particle grid}
+\label{f13}
+\end{center}
+\end{figure}
+
+The author proposed with an interesting fully procedural method to generate the particles using a camera-centered particle grid shown above. 
+\subsection{The Design}
+This grid has several cells, each one containing several particle layers. The number of the layers, the particle size and the density are determined by 2D noise texture. Usually, the particles in each next ring have twice the size of the inner ring.\\\\\\\\
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[scale=0.1]{images/Noise.png}
+\caption{A typical noise texture}
+\label{f10}
+\end{center}
+\end{figure}
+
+\subsection{The Implementation}
+The generation process is performed on GPU by the following steps:
+\begin{enumerate}
+\item Process each cell, compute the cloud density of this cell, and create a list of valid non-empty cells according to the 2D noise texture. In this step, one shader thread process one cell, and a buffer is used to store the indices of valid cells.
+\item Process the list of valid cells from the previous step. Generate one or more particles for each cell depending on the number of the layers and cloud density in the cell. In this step, one shader thread process one valid cell and generates particles.
+\item Generate an ordered list of particles because they must be rendered in back to front order for the blending purpose. However, sorting on GPU is quite expensive, so the author provided a solution that using streaming output the particles only for valid cells to preserve the order, and then process 32 particles by one GS thread.
+\end{enumerate}
+\section{Pre-Computing 4D Look-up Tables}
+The current graphics hardware does not support 4D textures, so the author used 3D textures with manual interpolation for the forth coordinate to emulate the 4D texture. 
+
+\subsection{The Design}
+The optical depth integral is stored in a $64\times 32\times 64\times 32$ 8-bit look-up table which occupies 4 MB storage space. Single and multiple scattering are stored in two $32\times 64\times 16\times 8$ 16-bit float look-up tables. Each table occupies 0.5 MB storage space.
+\subsection{The Implementation}
+\begin{lstlisting}
+#define SAMPLE_4D_LUT(tex3DLUT, LUT_DIM, f4LUTCoords, fLOD, Result) 
+{                                                              
+    float3 f3UVW;                                              
+    f3UVW.xy = f4LUTCoords.xy;                                 
+    float fQSlice = f4LUTCoords.w * LUT_DIM.w - 0.5;           
+    float fQ0Slice = floor(fQSlice);                           
+    float fQWeight = fQSlice - fQ0Slice;                       
+                                                               
+    f3UVW.z = (fQ0Slice + f4LUTCoords.z) / LUT_DIM.w;          
+    /* frac() assures wraparound filtering of w coordinate*/ 
+    Result = lerp(tex3DLUT.SampleLevel(samLinearWrap, f3UVW, fLOD), 									 tex3DLUT.SampleLevel(samLinearWrap, frac(f3UVW + float3(0,0,1LUT_DIM.w)), 					 fLOD), fQWeight);                                                                          
+}
+\end{lstlisting}
+As we can see in the code snippet above, \textbf{SAMPLE\_4D\_LUT} is a utility function which returns an interpolated result into the 5th parameter from the first 4 parameters, which are 3D texture, dimension, coordinates and LOD index.
 \section{Pre-Computing Optical Depth}
 The first step is to pre-compute the optical depth using Equation 2.2: $\tau(A, B) = \int_{A}^{B}\beta(P)\cdot ds$ for each ray to the boundary of a certain particle. The author assumed that the camera will always stay outside the volume. Then, the goal of this step is to calculate the optical depth integral for all possible camera positions and orientations.
 
@@ -13,11 +62,11 @@ The first step is to pre-compute the optical depth using Equation 2.2: $\tau(A, 
 \end{figure}
 
 \subsection{The Design}
-To describe a ray, we need 4 angles, 2 angles describing the start point on the particle sphere, and 2 angles describing the view direction. Because of the 4 parameters, a 4D look-up table is necessary. As shown in the figure above, $\varphi_S\in[0, 2\pi]$ and $\theta_S\in[0, \pi]$ are used to specify the start point of the ray. While $\varphi_v\in[0, 2\pi]$ and $\theta_v\in[0, \frac{\pi}{2}]$ are used to specify the direction of the ray.\\\\\\
+To describe a ray, we need 4 angles, 2 angles describing the start point on the particle sphere, and 2 angles describing the view direction. Because of the 4 parameters, a 4D look-up table is necessary. As shown in the figure above, $\varphi_S\in[0, 2\pi]$ and $\theta_S\in[0, \pi]$ are used to specify the start point of the ray. While $\varphi_v\in[0, 2\pi]$ and $\theta_v\in[0, \frac{\pi}{2}]$ are used to specify the direction of the ray.
 
 \begin{figure}[htp]
 \begin{center}
-\includegraphics[scale=0.5]{images/opticaldepthintegration.png}
+\includegraphics[scale=0.8]{images/opticaldepthintegration.png}
 \caption{Numerically integrate the optical depth of a ray}
 \label{f9}
 \end{center}
@@ -25,16 +74,8 @@ To describe a ray, we need 4 angles, 2 angles describing the start point on the 
 
 Then we use Equation 2.2: $\tau(A, B) = \int_{A}^{B}\beta(P)\cdot ds$ to accumulate the optical depth of a ray. Now, here is the interesting part of how to retrieve the extinction coefficient $\beta(P)$. The author used 4D look-tables which contains several 3D noises to get the extinction coefficient. The figure below shows one typical noise texture.
 
-\begin{figure}[htp]
-\begin{center}
-\includegraphics[scale=0.1]{images/Noise.png}
-\caption{A typical noise texture}
-\label{f10}
-\end{center}
-\end{figure}
-
 \subsection{The Implementation}
-After carefully explaining the design of the first step, let's have a look at how the actual related function in the shader looks like. Please note that the rendering API is \textbf{DirectX}, hence the shader is written in \textbf{HLSL}.\\\\
+After carefully explaining the design of the first step, let's have a look at how the actual related function in the shader looks like. Please note that the rendering API is \textbf{DirectX}, hence the shader is written in \textbf{HLSL}.
 \begin{lstlisting}
 // This shader computes level 0 of the maximum density mip map
 float2 PrecomputeOpticalDepthPS(SScreenSizeQuadVSOutput In) : SV_Target
@@ -99,13 +140,13 @@ particle}
 \label{f11}
 \end{center}
 \end{figure}
-First of all, the author assumed that the particle density only depends on the distance to the center. As the particle is a perfect sphere, which has the nature of symmetry, the author indicated that an arbitrary light direction coinciding with positive $z$ axis can be chosen to examine one of the rays that intersect the sphere. Since the light field is also symmetrical, only one angle $\theta_S$ is needed to describe the start point of a ray. As discussed in the previous section, another 2 angles $\phi_v$ and $\theta_v$ will still be needed to describe the ray direction. As the light field inside the volumes is important to solve the scattering equation, the author introduced a 4D look-up table with 3 angles($\theta_S$, $\phi_v$ and $\theta_v$) and the fraction of distance $r$ from the center of the sphere. We note the table as 
+First of all, the author assumed that the particle density only depends on the distance to the center. As the particle is a perfect sphere, which has the nature of symmetry, the author indicated that an arbitrary light direction coinciding with positive $z$ axis can be chosen to examine one of the rays that intersect the sphere. Since the light field is also symmetrical, only one angle $\theta_S$ is needed to describe the start point of a ray. As discussed in the previous section, another 2 angles $\phi_v$ and $\theta_v$ will still be needed to describe the ray direction. As the light field inside the volumes is important to solve the scattering equation, the author introduced a 4D look-up table with 3 angles($\theta_S$, $\phi_v$ and $\theta_v$) and the fraction of distance $r$ from the center of the sphere. We denote the table by 
 \begin{equation}
-\bar{L}^{(1)}_{In}(\theta_S, \phi_v, \theta_v, r), \theta_S\in[0, \pi], \phi_v\in[0, \pi], \theta_v\in[0, \pi], r\in[0, 1].
+\overline{L}^{(1)}_{In}(\theta_S, \phi_v, \theta_v, r), \theta_S\in[0, \pi], \phi_v\in[0, \pi], \theta_v\in[0, \pi], r\in[0, 1].
 \end{equation}
 The author then proposed with a solution to single scattering inside the spherical particle:
 \begin{equation}
-\bar{L}^{(1)}_{In} = \int_{S}^{E}e^{-\tau(P,S)}e^{-\tau(P,Q)} \cdot \beta(P) \cdot ds,
+\overline{L}^{(1)}_{In} = \int_{S}^{E}e^{-\tau(P,S)}e^{-\tau(P,Q)} \cdot \beta(P) \cdot ds,
 \end{equation}
 where \textbf{S} is the start point of the ray and \textbf{E} is the exit point of the ray. \textbf{Q} is the point on the surface of the sphere through which the light reaches the current integration point \textbf{P}. The author finally implied that the phase function $P(\theta)$ is only used at run time to avoid precision issues. Just like the optical depth calculation, the extinction coefficient $\beta(P)$ can be evaluated in different methods as long as the distance to the center is the only influencing factor. The author tried different methods and finally decided to make the density constant.
 
@@ -155,13 +196,13 @@ float PrecomputeSingleSctrPS(SScreenSizeQuadVSOutput In) : SV_Target
 Similar to the function calculating optical depth, this function \textbf{PrecomputeSingleSctrPS} firstly decomposes the given projection position and the 4 parameters from the 4D look-up table into 3 vec3 positions: the first one \textbf{f3EntryPointUSSpace} describes the start position of the ray, the second one \textbf{f3ViewRayUSSpace} describes the ray direction, the last one \textbf{f3LightDirUSSpace} describes the light direction. Using these 3 components, the density scale is calculated. Similarly, the intersection view ray is evaluated carefully avoiding the precision issues by moving the starting point slightly into the sphere by the amount of \textbf{f3ViewRayUSSpace*1e-4}. Then the integration is performed in the \textbf{for loop}. In each step, we calculate the distance \textbf{fCloudMassToLight} from center of the cloud to the light, and the distance \textbf{fCloudMassToCamera} from the center of the cloud to the camera. Then we can evaluate the total light attenuation \textbf{fTotalLightAttenuation}. Finally, we accumulate the single scattering result \textbf{fInscattering} and \textbf{fCloudMassToCamera} because we are moving forward. Why didn't the author accumulate \textbf{fCloudMassToLight}? That's because the light source is treated as directional light, which means the light source is in an infinite distance.
 
 \subsection{Multiple Scattering}
-Multiple scattering is based single scattering using Equation 3.2 $\bar{L}^{(1)}_{In} = \int_{S}^{E}e^{-\tau(P,S)}e^{-\tau(P,Q)} \cdot \beta(P) \cdot ds$. However, this time, we need to calculate $\bar{L}^{(n)}_{In}$.
+Multiple scattering is based single scattering using Equation 3.2 $\overline{L}^{(1)}_{In} = \int_{S}^{E}e^{-\tau(P,S)}e^{-\tau(P,Q)} \cdot \beta(P) \cdot ds$. However, this time, we need to calculate $\overline{L}^{(n)}_{In}$.
 \subsubsection{The Design}
 The author proposed with 3 steps:
 \begin{enumerate}
-\item Evaluate $\bar{J}^{(n)}(\theta_S, \phi_v, \theta_v, r)$  for every point and direction inside he sphere by solving Equation 2.8: $J^{(n)}(P, \vec{v}) = \int_{\Omega}L_In(P, \vec{\omega}) \cdot P(\theta) \cdot d\omega$.
-\item Evaluate $\bar{L}_{In}^{(n)}(\theta_S, \phi_v, \theta_v, r)$ as the current order in scattering by solving Equation 2.7: $L_{In}^{(n)}(C, \vec{v}) = \int_{P_0}^{P_1}e^{-\tau(P, P_0)} \cdot J(P, \vec{v}) \cdot \beta(P) \cdot ds$.
-\item Accumulate current scattering order to the total look-up table: $\bar{L}_{In}^M = \bar{L}_{In}^M + \bar{L}_{In}^{(n)}$.
+\item Evaluate $\overline{J}^{(n)}(\theta_S, \phi_v, \theta_v, r)$  for every point and direction inside he sphere by solving Equation 2.8: $J^{(n)}(P, \vec{v}) = \int_{\Omega}L_In(P, \vec{\omega}) \cdot P(\theta) \cdot d\omega$.
+\item Evaluate $\overline{L}_{In}^{(n)}(\theta_S, \phi_v, \theta_v, r)$ as the current order in scattering by solving Equation 2.7: $L_{In}^{(n)}(C, \vec{v}) = \int_{P_0}^{P_1}e^{-\tau(P, P_0)} \cdot J(P, \vec{v}) \cdot \beta(P) \cdot ds$.
+\item Accumulate current scattering order to the total look-up table: $\overline{L}_{In}^M = \overline{L}_{In}^M + \overline{L}_{In}^{(n)}$.
 \end{enumerate}
 As a result, the figure below shows single, multiple and final lighting for the sphere.
 \begin{figure}[htp]
@@ -177,7 +218,7 @@ row is illuminated from above}
 \subsubsection{The Implementation}
 We'll look into the implementation details of the 3 steps in this section.
 \begin{enumerate}
-\item Compute $\bar{J}^{(n)}$ for each point and direction inside the sphere.
+\item Compute $\overline{J}^{(n)}$ for each point and direction inside the sphere.
 \begin{lstlisting}
 float GatherScatteringPS(SScreenSizeQuadVSOutput In) : SV_Target
 {
@@ -223,11 +264,10 @@ float GatherScatteringPS(SScreenSizeQuadVSOutput In) : SV_Target
     return fGatheredScattering;
 }
 \end{lstlisting}
-Similarly, in this function \textbf{GatherScatteringPS}, the given projection position and the 4 parameters from the 4D look-up table is decomposed to 3 vec3 positions: the first one \textbf{f3PosUSSpace} describes the start position of the ray, the second one \textbf{f3ViewRayUSSpace} describes the ray direction, the last one \textbf{f3LightDirUSSpace} describes the light direction. Then we use the \textbf{zenith angles} $\varphi_v$ and \textbf{azimuth angles} $\theta_v$ count as the total steps, and we do the integration inside the two nested for loops. In each step, $\varphi_v$ and $\theta_v$ are increased by a step size. According to $\varphi_v$, $\theta_v$ and the start point, we calculate the ray direction \textbf{f3CurrDir}. After this, we transform the ray from world space back to the particle space. Then we check if the distance of the 4D table is 1 in order to calculate the current scattering direction \textbf{fCurrDirScattering} correctly. Finally, we accumulate the total scattering in each step by the amount of multiplying the current scattering direction \textbf{fCurrDirScattering} to the delta angle \textbf{fDiffSolidAngle}.\\
-\textbf{SAMPLE\_4D\_LUT} is a utility function which returns an interpolated result into the 5th parameter from the first 4 parameters, which are 3D texture, Dim, coordinates and LOD index.
+Similarly, in this function \textbf{GatherScatteringPS}, the given projection position and the 4 parameters from the 4D look-up table is decomposed to 3 vec3 positions: the first one \textbf{f3PosUSSpace} describes the start position of the ray, the second one \textbf{f3ViewRayUSSpace} describes the ray direction, the last one \textbf{f3LightDirUSSpace} describes the light direction. Then we use the \textbf{zenith angles} $\varphi_v$ and \textbf{azimuth angles} $\theta_v$ count as the total steps, and we do the integration inside the two nested for loops. In each step, $\varphi_v$ and $\theta_v$ are increased by a step size. According to $\varphi_v$, $\theta_v$ and the start point, we calculate the ray direction \textbf{f3CurrDir}. After this, we transform the ray from world space back to the particle space. Then we check if the distance of the 4D table is 1 in order to calculate the current scattering direction \textbf{fCurrDirScattering} correctly. Finally, we accumulate the total scattering in each step by the amount of multiplying the current scattering direction \textbf{fCurrDirScattering} to the delta angle \textbf{fDiffSolidAngle}.
 
 
-\item Compute $\bar{L}_{In}^{(n)}$ as the current order.
+\item Compute $\overline{L}_{In}^{(n)}$ as the current order.
 \begin{lstlisting}
 float ComputeScatteringOrderPS(SScreenSizeQuadVSOutput In) : SV_Target
 {
@@ -278,7 +318,7 @@ float ComputeScatteringOrderPS(SScreenSizeQuadVSOutput In) : SV_Target
 
 As always, firstly the function \textbf{ComputeScatteringOrderPS} computes the ray's start position, the direction, and the light direction. Again, moving the start point slightly inside the sphere to avoid precision issues. Then we calculate the intersected ray result, and step up some basic variables for the integration. We also calculate the interpolated result from the 3D texture of gathered scattering texture and store it into a variable called \textbf{fPrevGatheredSctr} as the initial scattering. In each integration step, we multiply the gathered scattering by the attenuation to the camera \textbf{fAttenuationToCamera}. Finally we accumulate the final scattering light into the camera \textbf{fInscattering} with the average amount of the scattering in this step \textbf{fGatheredScattering} and the scattering from the previous step \textbf{fPrevGatheredSctr}.
 
-\item Accumulate current scattering order to the total look-up table: $\bar{L}_{In}^M = \bar{L}_{In}^M + \bar{L}_{In}^{(n)}$.
+\item Accumulate current scattering order to the total look-up table: $\overline{L}_{In}^M = \overline{L}_{In}^M + \overline{L}_{In}^{(n)}$.
 \begin{lstlisting}
 float AccumulateMultipleScattering(SScreenSizeQuadVSOutput In) : SV_Target
 {
@@ -291,4 +331,82 @@ float AccumulateMultipleScattering(SScreenSizeQuadVSOutput In) : SV_Target
 This function \textbf{AccumulateMultipleScattering} is quite straightforward, it accumulates the multiple scattering.
 \end{enumerate}
 
+\section{Estimating Occlusion}
+We already have the scattering data, by this point, the cloud is still semi-transparent no matter how thick it is. 
+\subsection{The Design}
+The occlusion describes the attenuation by other particles as the light travels to the current particle. Thus, computing the light occlusion is necessary.
+
+\subsection{The Implementation}
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[scale=0.7]{images/occlusion.png}
+\caption{Light-space tile grid (left) and computing light occlusion
+by traversing the tile’s list (right)}
+\label{f14}
+\end{center}
+\end{figure}
+
+The occlusion is estimated in the following 3 steps:
+\begin{enumerate}
+\item Perform light-space tiling and construct lists of particles
+covering each tile. In this step, one tile is actually one pixel, and each particle is assigned to one tile. A buffer of the screen size is used to store the index of the first particle in the list and another buffer is used to store the lists elements. As discussed in the first section of this chapter, it is important to preserve the original particle order for blending purpose. Hence, the Pixel Shader Ordering is used.
+\item Traverse the particle lists from the previous step to estimate the occlusion. This step is carried out by the compute shader. Since each particle is assigned to one tile, the shader traverse through the list of the tile and calculate the opcity of particles on the light path. As the particles are in back-to-front order, the traversing loop for the compute shader can be terminated immediately when the current particle is reached. Or the programmer can set a threshold for the total transparency. The threshold makes sure that the cloud will never be totally semi-transparent at some certain transparency level. And it is encouraged to set a threshold for faster performance.
+\item Smooth the occlusion and simulates the diffusion for the whole cloud. A compute shader is responsible for processing each valid particle and performing low-pass filtering of the light occlusion. The author also mentioned that using particle density as weights is a good way to avoid incorrect smoothing.
+\end{enumerate}
+
+
 \section{Generating Real-time Shading Model}
+In this section, the author proposed with an approximated solution to Equation 2.9: $L(C, \vec{v}) = L_{In}(C, \vec{v}) + e^{-\tau(P_0, P_1)} \cdot L_B$ using the results from the previous two steps, which are the \textbf{optical depth} $\overline{T}$, the \textbf{single scattering} $\overline{L}_{in}^{(1)}$ and the multiple scattering $\overline{L}_{in}^{(M)}$.
+
+To generate a shading model, the first step is getting the optical depth $\overline{\tau}$ for the given ray from $\overline{T}$:
+\begin{equation}
+\overline{\tau} = \overline{T}(\varphi_S, \theta_S, \varphi_v, \theta_v).
+\end{equation}
+
+\subsection{The Design}
+The lighting model has three components: single scattering, multiple scattering and ambient. 
+
+\begin{enumerate}
+\item The author assumed that the single scattering $\overline{l}^{(1)}$ in the light model is equal to single scattering in the homogeneous sphere:
+\begin{equation}
+\overline{l}^{(1)} = P(\theta) \cdot \overline{L}^{(1)}(\theta_S, \phi_v, \theta_v, \overline{\rho} \cdot \overline{\tau}),
+\end{equation}
+where $\overline{\rho}$ is the density scale of each particle and $P(\theta)$ is this the phase function discussed in Chapter 2.
+
+\item However, the multiple scattering only depends on the total density scale of the whole particle, the individual optical depth and phase function do not have any impact. Hence, the multiple scattering can be evaluated using the equation below:
+\begin{equation}
+\overline{l}^{(M)} = \overline{L}^{(M)}(\theta_S, \phi_v, \theta_v, \overline{\rho})
+\end{equation}
+
+\item The ambient light $\overline{l}^{A}$ is used to make the creases of the cloud slightly brighter than the edges influenced by the distance to the first cloud. And this distance is stored in the 4D look-up table $\overline{T}$. It is used at run time for the ambient light intensity of the sky.
+\end{enumerate}
+ 
+\subsection{The Implementation}
+\begin{lstlisting}
+void GetSunLightExtinctionAndSkyLight(in float3 f3PosWS,
+                                      out float3 f3Extinction,
+                                      out float3 f3AmbientSkyLight,
+                                      Texture2D<float2> tex2DOccludedNetDensityToAtmTop,
+                                      Texture2D<float3> tex2DAmbientSkylight )
+{
+    float3 f3EarthCentre = float3(0, -g_MediaParams.fEarthRadius, 0);
+    float3 f3DirFromEarthCentre = f3PosWS - f3EarthCentre;
+    float fDistToCentre = length(f3DirFromEarthCentre);
+    f3DirFromEarthCentre /= fDistToCentre;
+    float fHeightAboveSurface = fDistToCentre - g_MediaParams.fEarthRadius;
+    float fCosZenithAngle = dot(f3DirFromEarthCentre, g_LightAttribs.f4DirOnLight.xyz);
+
+    float fRelativeHeightAboveSurface = fHeightAboveSurface / g_MediaParams.fAtmTopHeight;
+    float2 f2ParticleDensityToAtmTop = g_tex2DOccludedNetDensityToAtmTop.SampleLevel(samLinearClamp, float2(fRelativeHeightAboveSurface, fCosZenithAngle*0.5+0.5), 0).xy;
+    
+    float3 f3RlghOpticalDepth = g_MediaParams.f4RayleighExtinctionCoeff.rgb * f2ParticleDensityToAtmTop.x;
+    float3 f3MieOpticalDepth  = g_MediaParams.f4MieExtinctionCoeff.rgb      * f2ParticleDensityToAtmTop.y;
+        
+    // And total extinction for the current integration point:
+    f3Extinction = exp( -(f3RlghOpticalDepth + f3MieOpticalDepth) );
+    
+    f3AmbientSkyLight = tex2DAmbientSkylight.SampleLevel(samLinearClamp, float2(fCosZenithAngle*0.5+0.5, 0.5), 0);
+}
+\end{lstlisting}
+This function \textbf{GetSunLightExtinctionAndSkyLight} basically calculate the ambient sky light \textbf{f3AmbientSkyLight} from the look-up table $\overline{T}$. As we can see, we get the earth center position \textbf{f3EarthCentre} first, and use it to calculate the distance between the earth center to the particle \textbf{fDistToCentre}. Then, the altitude of the particle \textbf{fHeightAboveSurface} and the cos value of the zenith angle \textbf{fCosZenithAngle} are evaluated. After this, we retrieve the optical depth from the pre-computed 4D look-up tale. Finally, we calculate the ambient sky light using the data from above and sample it with a 2D texture describing the general ambient pattern.
+
