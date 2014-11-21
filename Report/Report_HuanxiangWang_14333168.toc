@@ -28,14 +28,15 @@
 \contentsline {subsection}{\numberline {3.4.2}Multiple Scattering}{15}
 \contentsline {subsubsection}{The Design}{15}
 \contentsline {subsubsection}{The Implementation}{16}
-\contentsline {section}{\numberline {3.5}Estimating Occlusion}{19}
-\contentsline {subsection}{\numberline {3.5.1}The Design}{19}
-\contentsline {subsection}{\numberline {3.5.2}The Implementation}{19}
-\contentsline {section}{\numberline {3.6}Generating Real-time Shading Model}{20}
-\contentsline {subsection}{\numberline {3.6.1}The Design}{20}
+\contentsline {subsection}{\numberline {3.4.3}Integrating with the Atmospheric Scattering}{19}
+\contentsline {section}{\numberline {3.5}Estimating Occlusion}{20}
+\contentsline {subsection}{\numberline {3.5.1}The Design}{20}
+\contentsline {subsection}{\numberline {3.5.2}The Implementation}{20}
+\contentsline {section}{\numberline {3.6}Generating Real-time Shading Model}{21}
+\contentsline {subsection}{\numberline {3.6.1}The Design}{21}
 \contentsline {subsection}{\numberline {3.6.2}The Implementation}{21}
 \contentsline {section}{\numberline {3.7}Volume-Aware Blending}{22}
 \contentsline {subsection}{\numberline {3.7.1}The Design}{22}
 \contentsline {subsection}{\numberline {3.7.2}The Implementation}{23}
-\contentsline {section}{\numberline {3.8}Conclusion and Review}{23}
-\contentsline {chapter}{Bibliography}{24}
+\contentsline {section}{\numberline {3.8}Conclusion and Review}{24}
+\contentsline {chapter}{Bibliography}{26}

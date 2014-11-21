@@ -15,5 +15,7 @@
 \contentsline {figure}{\numberline {3.4}{\ignorespaces Numerically integrate the optical depth of a ray}}{12}
 \contentsline {figure}{\numberline {3.5}{\ignorespaces Pre-computing single scattering inside the spherical particle}}{13}
 \contentsline {figure}{\numberline {3.6}{\ignorespaces Pre-computed scattering for different light orientations. From left to right: single scattering only, 2 + scattering only, all terms (including ambient). The particle in the bottom row is illuminated from above}}{16}
-\contentsline {figure}{\numberline {3.7}{\ignorespaces Light-space tile grid (left) and computing light occlusion by traversing the tile’s list (right)}}{19}
-\contentsline {figure}{\numberline {3.8}{\ignorespaces Intersection of two volumetric particles}}{22}
+\contentsline {figure}{\numberline {3.7}{\ignorespaces Integration of clouds with the atmospheric light scattering: attenuation along the view ray (left) and sun light attenuation (right)}}{19}
+\contentsline {figure}{\numberline {3.8}{\ignorespaces Light-space tile grid (left) and computing light occlusion by traversing the tile’s list (right)}}{20}
+\contentsline {figure}{\numberline {3.9}{\ignorespaces Intersection of two volumetric particles}}{23}
+\contentsline {figure}{\numberline {3.10}{\ignorespaces Updating UAV and back buffer during the volume-aware blending}}{24}

@@ -331,6 +331,21 @@ float AccumulateMultipleScattering(SScreenSizeQuadVSOutput In) : SV_Target
 This function \textbf{AccumulateMultipleScattering} is quite straightforward, it accumulates the multiple scattering.
 \end{enumerate}
 
+\subsection{Integrating with the Atmospheric Scattering}
+This step solves the airlight integral for samples distributed along the epipolar lines on the screen, and then performs transformation from epipolar to screen space using bilateral filter.
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[scale=0.8]{images/integration.png}
+\caption{Integration of clouds with the atmospheric light
+scattering: attenuation along the view ray (left) and sun light
+attenuation (right)}
+\label{f17}
+\end{center}
+\end{figure}
+
+At each ray marching step, we check if a point is above or under the cloud. If the point is under the cloud, the cloud density texture is sampled to get the occlusion by the cloud. Meanwhile, the transparency and distance to clouds in screen space are used to attenuate scattering along the view rays. There is one thing to be aware, in this step, the author made an assumption that the altitude the the cloud is fixed.
+
 \section{Estimating Occlusion}
 We already have the scattering data, by this point, the cloud is still semi-transparent no matter how thick it is. 
 \subsection{The Design}
@@ -451,11 +466,39 @@ C &=& C_f + T_f \cdot Ci + T_f \cdot T_i \cdot C_b
 \end{eqnarray}
 
 \subsection{The Implementation}
+The author mentioned that current graphics hardware has no programmable blending unit. Thus, he used an extension from Intel called \textbf{Pixel Shader Ordering} to solve the above equation, which is able to read and write to arbitrary memory location. The author used two buffers to do the implementation, and they are UAV buffer and back buffer.
 
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[scale=0.8]{images/uvabuffer.png}
+\caption{Updating UAV and back buffer during the
+volume-aware blending}
+\label{f16}
+\end{center}
+\end{figure}
 
+The implementation details can be narrowed down into 3 steps:
+\begin{enumerate}
+\item Enable Pixel Shader Ordering.
+\item Store the current particle's color, density and min/max extent into the UAV buffer.
+\item Check each new particle against the currently one in the UAV buffer. If the new particle is in front of the current particle, the current is blended into the back buffer and replaced with the new one. If the new particle overlaps with the current particle, they are blended and stored into the back buffer.
+\end{enumerate}
 
 \section{Conclusion and Review}
-1.use quaternions instead of 4 angles, and interpolate between quaternions.
-2.assume directional light when doing scattering is not always true.
-3.particles have to be sorted to perform the volume aware blending, that costs a heavy load of calculations.
-4.decomposing the projection and 4d table in computing optical depth and scattering is redundant. why not create a data structure to store the ray information?
+This chapter describes the essential algorithms and implementations of the proposed method from the paper. We looked into how the particles are generated, how the 4D look-up tables are computed, how the optical depth and scattering are computed and stored, how the occlusion is estimated, how the real-time shading model is generated, and finally, how the volume-aware blending is approached.
+
+The architecture of this method is absolutely designed after carefully consideration. Overall it's efficient and able to output a realistic result of simulating the cumulus clouds. After reading the article for several times and inspecting the source, I have some suggestions to improve the method.
+
+\begin{enumerate}
+\item The author used 4 angles to describe a ray when computing the optical depth and scattering. This approach is straight forward, but not so efficient. Consider this, using one quaternion to describe the start point of the ray, and another quaternion to describe the ray direction. And by interpolating these two quaternions, we can describe each possible ray in the sphere with some certain sampling level.
+
+\item When computing the scattering, the author assumed that the light source is always a directional light, which in the common case is the sun. So when doing the integration of the final light through the cloud, the distance from the particle to the light source is not considered to be changing. And this is not true. Here is a typical scenario, an aircraft flies above the cloud in the night, and the only light source will be the point lights from the pilot lamps of the aircraft. So in my opinion, the author should extend the light source in order to adapt the clouds into different situations.
+
+\item When generating particles, performing volume-aware blending and any operations to the particles, they have to be sorted. Sorting millions of particle costs a heavy load of calculations. In my opinion, when generating the particles, make sure they are not intersected with each other will be another cheap solution. Although we could the lose the feature of volume-aware blending, but the outputting the result will be more fast, and it can be applied into real time games or simulators.
+
+\item  When computing optical depth and scattering, we noticed that there are lots of duplicated operations of decomposing the projection plane and the 4D look-up table to calculate the ray. If we design a specific data structure for the information of a ray, the redundancy problem can be solved.
+
+\item When integrating with the atmospheric scattering, the author assumed that the clouds will always have constant altitude, which is not always true. Actually, a clouds has its own physical attributes, e.g. the saturation of water drops will affect the density of the cloud, and further more, it affects the altitude of the cloud. If we want to the clouds behave differently in various weather conditions, changing the altitude when integrating with atmospheric scattering has to be considered and implemented.
+
+\item The camera is always outside the clouds, which means the user is not able to interact with the clouds. We noticed that, in the pre-computing steps, the light inside the clouds is not stored in the 4D look-up table. I suppose that is due to the consideration of the limitation of memory space.
+\end{enumerate}
